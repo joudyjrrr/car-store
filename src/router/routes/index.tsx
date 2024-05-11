@@ -12,6 +12,10 @@ export default function Routes() {
   const Products = lazy(() => import("../../pages/Products/Products"));
   const ShowProduct = lazy(() => import("../../pages/Products/ShowProduct"));
   const AddProducts = lazy(() => import("../../pages/Products/AddProducts"));
+  const Category = lazy(() => import("../../pages/Category/Category"));
+  const Customers = lazy(() => import("../../pages/Customers/Customers"));
+
+
 
 
 
@@ -47,6 +51,14 @@ export default function Routes() {
         {
           path: "/product/add",
           element: <AddProducts />,
+        },
+        {
+          path: "/category",
+          element: <Category />,
+        },
+        {
+          path: "/customers",
+          element: <Customers />,
         },
       ],
     },

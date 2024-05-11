@@ -9,7 +9,8 @@ import home from "../assets/svgs/home-2.svg"
 import pos from "../assets/svgs/shopping-cart.svg"
 import Order from "../assets/svgs/Purchase Order.svg"
 import product from "../assets/svgs/product.svg"
-
+import cat from "../assets/svgs/Rectangle 3515.svg"
+import customers from "../assets/svgs/custmoers.svg"
 
 
 export function cn(...inputs: ClassValue[]) {
@@ -47,6 +48,18 @@ type NavigationProjectProps = {
     titleLink: "المنتجات",
     icon: <img  src={product} className="me-4 w-6" />,
     path: "/product",
+    query: "",
+  },
+  {
+    titleLink: "التصنيفات",
+    icon: <img  src={cat} className="me-4 w-6" />,
+    path: "/category",
+    query: "",
+  },
+  {
+    titleLink: "الزبائن",
+    icon: <img  src={customers} className="me-4 w-6" />,
+    path: "/customers",
     query: "",
   },
 ];
