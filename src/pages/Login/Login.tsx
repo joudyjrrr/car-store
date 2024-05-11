@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import axios from "@/lib/axios";
 import { useMutation } from "@tanstack/react-query";
 import React from "react";
-import { useForm } from "react-hook-form";
+import { Form, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Roles } from "./roles";
@@ -48,18 +48,19 @@ const Login = () => {
             </p>
           </div>
           <h1 className="text-4xl font-md text-black text-end">Sign in</h1>
-          <FormProvider
-            onSubmit={handleSubmit(submitHandler)}
-            methods={methods}
+          <Form
+            {...methods}
           >
             <div className="flex flex-col gap-4 mt-6 text-end">
               <RHFTextField
+               control={methods.control}
                 inputClassName="bg-white rounded-[9px]"
                 name="email"
                 label="Enter your username or email address"
                 placeholder="Enter your username or email address"
               />
               <RHFTextField
+                 control={methods.control}
                 inputClassName="bg-white rounded-[9px]"
                 name="password"
                 type="password"
@@ -73,7 +74,7 @@ const Login = () => {
                 </Button>
               </div>
             </div>
-          </FormProvider>
+          </Form>
         </div>
         <div className="bg-gradient-to-r w-[650px] items-center  text-end from-gray-600 to-gray-200 rounded-[40px] p-6 flex flex-col">
           <div className="flex  justify-center items-center">

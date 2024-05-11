@@ -5,7 +5,7 @@ import { Dialog, DialogClose, DialogContent } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import React, { FC, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Form, useForm } from "react-hook-form";
 
 const DeliveryInfo: FC<{
   open: boolean;
@@ -29,21 +29,41 @@ const DeliveryInfo: FC<{
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className=" text-center max-w-[60rem]">
-        <FormProvider onSubmit={handleSubmit(() => {})} methods={methods}>
+        <Form {...methods}>
           <div className="flex flex-col gap-4">
             <h1 className="font-md text-xl"> Delivery Information</h1>
 
             <div className="flex flex-col gap-1 text-start">
               <div className="flex gap-4">
-                <RHFTextField name="" label="Customer Name" />
-                <RHFTextField name="" label="Address" />
+                <RHFTextField
+                  control={methods.control}
+                  name=""
+                  label="Customer Name"
+                />
+                <RHFTextField
+                  control={methods.control}
+                  name=""
+                  label="Address"
+                />
               </div>
               <div className="flex gap-2">
-                <RHFTextField name="" label="Department Number" />
+                <RHFTextField
+                  control={methods.control}
+                  name=""
+                  label="Department Number"
+                />
 
-                <RHFTextField name="" label="Floor" />
-                <RHFTextField name="" label="Street" />
-                <RHFTextField name="" label="Phone Number" />
+                <RHFTextField control={methods.control} name="" label="Floor" />
+                <RHFTextField
+                  control={methods.control}
+                  name=""
+                  label="Street"
+                />
+                <RHFTextField
+                  control={methods.control}
+                  name=""
+                  label="Phone Number"
+                />
               </div>
               <h1 className="text-center text-xl">Address</h1>
               {isLoaded && (
@@ -62,7 +82,7 @@ const DeliveryInfo: FC<{
             </div>
             <Button>Update Delivery Address</Button>
           </div>{" "}
-        </FormProvider>
+        </Form>
       </DialogContent>
     </Dialog>
   );
