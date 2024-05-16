@@ -52,6 +52,7 @@ const Table = ({
             style: {
               background: "#fff",    
               width:"100%",
+              overflowY:"hidden"
             },
           },
           

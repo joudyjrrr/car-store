@@ -164,13 +164,13 @@ const Orders = () => {
     </>
   );
   return (
-    <PageContainer breadcrumb={[{ title: "الطلبيات" }]}>
-      <div className="bg-white my-8  cursor-pointer text-center   border border-gray-200 rounded-3xl flex justify-center items-center">
-        <img src={path} className="w-14  h-14 border-e border-gray-200 p-4" />
-        <p className="border-e w-full flex justify-center border-gray-200 p-4 ">
+    <PageContainer breadcrumb={[{ title: "الطلبيات" }]} className="overflow-x-hidden">
+      <div className="bg-white my-8  max-md:flex-col max-md:w-fit cursor-pointer text-center   border border-gray-200 rounded-3xl flex justify-center items-center">
+        <img src={path} className="w-14  h-14 border-e border-gray-200 p-4 max-md:hidden" />
+        <p className="border-e w-full flex justify-center border-gray-200 p-4 max-md:justify-start">
           فتلرة حسب
         </p>
-        <p className="border-e w-full border-gray-200 p-4 flex justify-between items-center">
+        <p className="border-e  border-gray-200 p-4 flex justify-between items-center">
           <DatePickerDemo
             date={date}
             setDate={setDate}
@@ -223,7 +223,9 @@ const Orders = () => {
           customStyles={{
             table: {
               style: {
+                width:"100%",
                 background: "#fff",
+                overflowY:"hidden"
               },
             },
             headCells: {

@@ -79,13 +79,13 @@ const Products = () => {
   ];
 
   return (
-    <PageContainer breadcrumb={[{ title: "Product Stock" }]}>
+    <PageContainer breadcrumb={[{ title: "Product Stock" }]} className="overflow-x-hidden">
       <div className="w-full flex justify-end">
         <Button onClick={() => navigate("/product/add")}>اضافة منتج</Button>
       </div>
       <Form {...form}>
-        <div className="bg-white my-8  cursor-pointer text-center   border border-gray-200 rounded-3xl flex justify-center items-center">
-          <img src={path} className="w-14  h-14 border-e border-gray-200 p-4" />
+      <div className="bg-white my-8  max-md:flex-col max-md:w-fit cursor-pointer text-center   border border-gray-200 rounded-3xl flex justify-center items-center">
+      <img src={path} className="w-14  h-14 border-e border-gray-200 p-4 max-md:hidden" />
           <p className="border-e w-full flex justify-center border-gray-200 p-4 ">
             فلترة حسب
           </p>

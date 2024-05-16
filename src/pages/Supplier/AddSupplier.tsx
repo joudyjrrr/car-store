@@ -5,21 +5,19 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
 import axios from "@/lib/axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import React, { FC, useEffect } from "react";
+import React, { FC } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-const AddCustomers: FC<{
+const AddSupplier: FC<{
   open: boolean;
   onClose: () => void;
   setSelectedRow: any;
   formValues: any;
 }> = ({ open, onClose, formValues, setSelectedRow }) => {
-    const form = useForm();
-    const currentValue = form.watch("image");
   const { mutate, isPending } = useMutation({
     mutationFn: async (data) => {
-      const res = await axios.post(`/registerCustomer`, data, {
+      const res = await axios.post(`/createSupplier`, data, {
         headers: {
           "Content-Type": "multipart/formData",
         },
@@ -29,7 +27,7 @@ const AddCustomers: FC<{
   });
   const { mutate: Update } = useMutation({
     mutationFn: async (data) => {
-      const res = await axios.post(`/updateCustomer/${formValues?.id}`, data, {
+      const res = await axios.post(`/updateSupplier/${formValues?.id}`, data, {
         headers: {
           "Content-Type": "multipart/formData",
         },
@@ -37,25 +35,8 @@ const AddCustomers: FC<{
       return res;
     },
   });
-  useEffect(() => {
-    if (formValues) {
-      form.reset({
-        name: formValues?.user?.name,
-        phone: formValues?.user?.phone,
-        address: formValues?.user?.address,
-        email: formValues?.user?.email,
-        // image: `${BASE_URL_IMG}/${formValues.image?.id}/${formValues.image?.file_name}`,
-      });
-    } else {
-      form.reset({
-        name: "",
-        image: undefined,
-        phone: "",
-        address: "",
-        email: "",
-      });
-    }
-  }, [formValues]);
+  const form = useForm();
+  const currentValue = form.watch("image");
   const queryClient = useQueryClient();
   const submitHandler = (data: any) => {
     const formData = new FormData() as any;
@@ -64,13 +45,19 @@ const AddCustomers: FC<{
     data.address && formData.append("address", data.address);
     data.email && formData.append("email", data.email);
     data.password && formData.append("password", data.password);
+    data.money && formData.append("money", data.money);
+    data.opening_balance &&
+      formData.append("opening_balance", data.opening_balance);
+
+    data.password && formData.append("password", data.password);
+
     typeof data?.image === "object" && formData.append("image", data.image);
     if (formValues?.id) {
       Update(data, {
         onSuccess() {
           toast("تمت التعديل بنجاح");
           onClose();
-          queryClient.refetchQueries({ queryKey: ["get-customer"] });
+          queryClient.refetchQueries({ queryKey: ["get-Supplier"] });
           setSelectedRow(null);
           form.reset({
             name: "",
@@ -89,7 +76,7 @@ const AddCustomers: FC<{
         onSuccess() {
           toast("تمت الاضافة بنجاح");
           onClose();
-          queryClient.refetchQueries({ queryKey: ["get-customer"] });
+          queryClient.refetchQueries({ queryKey: ["get-Supplier"] });
           form.reset({
             name: "",
             image: undefined,
@@ -107,31 +94,10 @@ const AddCustomers: FC<{
   };
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-[50rem]">
+      <DialogContent className="max-w-[55rem]">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(submitHandler)}>
-            <h1 className="text-center text-xl">اضافة زبون جديد</h1>
             <div className="grid grid-cols-3 gap-4">
-              <div className="flex flex-col">
-                <RHFTextField
-                  control={form.control}
-                  name="phone"
-                  label="رقم التليفون"
-                  placeholder="رقم التليفون"
-                />
-                <RHFTextField
-                  control={form.control}
-                  name="email"
-                  label="الايميل"
-                  placeholder="الايميل"
-                />
-                <RHFTextField
-                  control={form.control}
-                  name="address"
-                  label="العنوان"
-                  placeholder="العنوان"
-                />
-              </div>
               <div className="flex flex-col">
                 <RHFTextField
                   control={form.control}
@@ -146,7 +112,43 @@ const AddCustomers: FC<{
                   placeholder="كلمة السر"
                   type="password"
                 />
+                <RHFTextField
+                  control={form.control}
+                  name="email"
+                  label="الايميل"
+                  placeholder="الايميل"
+                />
+                <RHFTextField
+                  control={form.control}
+                  name="opening_balance"
+                  type="number"
+                  label="الرصيد الافتتاحي"
+                  placeholder="الرصيد الافتتاحي"
+                />
               </div>
+              <div className="flex flex-col">
+                <RHFTextField
+                  control={form.control}
+                  name="phone"
+                  label="رقم التليفون"
+                  placeholder="رقم التليفون"
+                />
+
+                <RHFTextField
+                  control={form.control}
+                  name="address"
+                  label="العنوان"
+                  placeholder="العنوان"
+                />
+                <RHFTextField
+                  control={form.control}
+                  name="money"
+                  type="number"
+                  label="money"
+                  placeholder="money"
+                />
+              </div>
+
               {currentValue ? (
                 <img
                   src={
@@ -162,7 +164,7 @@ const AddCustomers: FC<{
                   setValue={form.setValue}
                   control={form.control}
                   name="image"
-                  label="اضافة صورة للصنف"
+                  label="اضافة صورة "
                   watch={form.watch}
                 />
               )}
@@ -181,4 +183,4 @@ const AddCustomers: FC<{
   );
 };
 
-export default AddCustomers;
+export default AddSupplier;

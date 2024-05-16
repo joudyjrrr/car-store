@@ -33,7 +33,11 @@ const SellItem = () => {
   const [selectCurrency, setSelectCurrency] = useState<any>({});
   return (
     <PageContainer breadcrumb={[{ title: "الاصناف" }]}>
-      <div className="w-full flex gap-4 items-start">
+      <div className="w-full flex gap-4 items-start max-[560px]:flex-col">
+      <ContainerSellItem
+          selectedProducts={selectedProducts}
+          setSelectedProducts={setSelectedProducts}
+        />
         <div
           className={` grid grid-cols-4 gap-4 max-xl:grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1 px-2`}
         >
@@ -57,10 +61,7 @@ const SellItem = () => {
             </div>
           ))}
         </div>
-        <ContainerSellItem
-          selectedProducts={selectedProducts}
-          setSelectedProducts={setSelectedProducts}
-        />
+       
       </div>
       <ModalDetails
         selectedProducts={selectedProducts}

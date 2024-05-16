@@ -14,6 +14,19 @@ export default function Routes() {
   const AddProducts = lazy(() => import("../../pages/Products/AddProducts"));
   const Category = lazy(() => import("../../pages/Category/Category"));
   const Customers = lazy(() => import("../../pages/Customers/Customers"));
+  const CarModel = lazy(() => import("../../pages/Cars/CarModel/CarModel"));
+  const CarHorsepower = lazy(() => import("../../pages/Cars/CarHorsepower/CarHorsepower"));
+  const CarYear = lazy(() => import("../../pages/Cars/CarYear/CarYear"));
+  const CarCompany = lazy(() => import("../../pages/Cars/CarCompany/CarCompany"));
+  const EmployeeType = lazy(() => import("../../pages/EmployeeType/EmployeeType"));
+  const PayTypes = lazy(() => import("../../pages/PayTypes/PayTypes"));
+  const Brand = lazy(() => import("../../pages/Brand/Brand"));
+  const SiginUp = lazy(() => import("../../pages/Auth/SiginUp"));
+  const Supplier = lazy(() => import("../../pages/Supplier/Supplier"));
+
+
+
+
 
 
 
@@ -21,8 +34,12 @@ export default function Routes() {
 
   return createBrowserRouter([
     {
-      path: "/login",
+      path: "/auth/login",
       element: <Login />,
+    },
+    {
+      path: "/auth/signup",
+      element: <SiginUp />,
     },
     {
       path: "/",
@@ -60,6 +77,39 @@ export default function Routes() {
           path: "/customers",
           element: <Customers />,
         },
+        {
+          path: "/cars/car-model",
+          element: <CarModel />,
+        },
+        {
+          path: "/cars/motor",
+          element: <CarHorsepower />,
+        },
+        {
+          path: "/cars/carYear",
+          element: <CarYear />,
+        },
+        {
+          path: "/cars/car-company",
+          element: <CarCompany />,
+        },
+        {
+          path: "/employee-type",
+          element: <EmployeeType />,
+        },
+        {
+          path: "/pay-types",
+          element: <PayTypes />,
+        },
+        {
+          path: "/brand",
+          element: <Brand />,
+        },
+        {
+          path: "/supplier",
+          element: <Supplier />,
+        },
+      
       ],
     },
   ]);

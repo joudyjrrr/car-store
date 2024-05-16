@@ -15,21 +15,31 @@ import { IoIosSearch } from "react-icons/io";
 import { Form } from "@/components/ui/form";
 import AddCategory from "./AddCategory";
 import { Button } from "@/components/ui/button";
-const data = [
-  {
-    id: "1",
-    name: "pants ",
-  },
-];
+import { useQuery } from "@tanstack/react-query";
+import axios, { BASE_URL_IMG } from "@/lib/axios";
+import { ModalStates } from "@/types";
+import { DeleteModal } from "@/components/dialog";
+
 const Category = () => {
+  const [selectedRow, setSelectedRow] = useState<any>();
+  const [modalState, setModalState] = useState<ModalStates>(null);
+  const { data, isFetching, error, refetch } = useQuery({
+    queryKey: ["get-prod-cat"],
+    queryFn: async () => {
+      const { data } = await axios.get(`/getProductCategory`);
+      return data.data;
+    },
+  });
+  // console.log(data);
   const cols: TableColumn<any>[] = [
     {
-      id: "name",
+      id: "image",
       name: "الصورة",
       cell: (row) => (
-        <div className="text-sm">
-          <Logo width="50" height="50" />
-        </div>
+        <img
+          className="w-[60px] h-[60px] my-6"
+          src={`${row?.image?.original_url}`}
+        />
       ),
     },
     {
@@ -51,10 +61,17 @@ const Category = () => {
       name: "التحكم",
       cell: (row) => (
         <div className="bg-[#FAFBFD] border cursor-pointer  h-[30px] border-[#D5D5D5] rounded-lg flex items-center ">
-          <FiEdit className=" text-gray-600 text-2xl  h-full p-1 border-e border-[#D5D5D5]" />
-
-          <BiSolidTrashAlt
-            className={`text-destructive text-2xl  h-full p-1`}
+          <FiEdit
+            onClick={() => {
+              setOpen(true);
+              setSelectedRow(row);
+            }}
+            className=" text-gray-600 text-2xl  h-full p-1 border-e border-[#D5D5D5]"
+          />
+          <DeleteModal
+            MassegeSuccess="تم الحذف بنجاح"
+            apiPath={`/deleteProductCategory/${row.id}`}
+            refetch={refetch}
           />
         </div>
       ),
@@ -63,13 +80,19 @@ const Category = () => {
   const form = useForm();
   const [open, setOpen] = useState(false);
   return (
-    <PageContainer breadcrumb={[{ title: "الاصناف" }]}>
+    <PageContainer
+      breadcrumb={[{ title: "الاصناف" }]}
+      className="overflow-x-hidden"
+    >
       <div className="flex w-full justify-end">
         <Button onClick={() => setOpen(true)}>اضافة صنف</Button>
       </div>
       <Form {...form}>
-        <div className="bg-white my-8  cursor-pointer text-center   border border-gray-200 rounded-3xl flex justify-center items-center">
-          <img src={path} className="w-14  h-14 border-e border-gray-200 p-4" />
+        <div className="bg-white my-8  max-md:flex-col max-md:w-fit cursor-pointer text-center   border border-gray-200 rounded-3xl flex justify-center items-center">
+          <img
+            src={path}
+            className="w-14  h-14 border-e border-gray-200 p-4 max-md:hidden"
+          />
           <p className="border-e w-full flex justify-center border-gray-200 p-4 ">
             فلترة حسب
           </p>
@@ -110,9 +133,18 @@ const Category = () => {
         table={{
           columns: cols,
           data: data,
+          loading: isFetching,
         }}
       />
-      <AddCategory open={open} onClose={() => setOpen(false)} />
+      <AddCategory
+        setSelectedRow={setSelectedRow}
+        formValues={selectedRow}
+        open={open}
+        onClose={() => {
+          setOpen(false);
+          setSelectedRow(null);
+        }}
+      />
     </PageContainer>
   );
 };

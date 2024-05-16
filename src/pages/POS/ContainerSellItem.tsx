@@ -100,7 +100,7 @@ const ContainerSellItem: FC<{
             <CiCircleMinus className="text-primary text-2xl" />
           </Button>
           <Input
-            className="p-2 w-10 h-10"
+            className="p-1 w-10 h-10"
             value={row.quantity}
             min={0}
             onChange={(e) =>
@@ -135,7 +135,7 @@ const ContainerSellItem: FC<{
   const { handleSubmit, watch, reset, setValue } = methods;
 
   return (
-    <div className="p-4 bg-white rounded-xl w-[430px] h-fit transition-all drop-shadow-lg flex flex-col gap-4">
+    <div className="p-4 bg-white rounded-xl w-[430px] max-sm:w-full h-fit transition-all drop-shadow-lg flex flex-col gap-4">
       <FormProvider onSubmit={handleSubmit(() => {})} methods={methods}>
         <div className="flex flex-col gap-2">
           <RHFSelect

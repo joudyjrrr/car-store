@@ -5,7 +5,7 @@ const Status: FC<{
 }> = ({ variant }) => {
   return (
     <span
-      className={`text-sm rounded-xl px-6 py-2   text-white ${
+      className={`text-sm rounded-xl px-6 max-xl:p-[4px] max-md:text-xs py-2   text-white ${
         variant === "Completed"
           ? "bg-[#00B69B]/60 ]"
           : variant === "Processing"

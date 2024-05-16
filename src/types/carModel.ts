@@ -1,7 +1,7 @@
 
 
 export type CarModelData = {
-    value:string;
+    name:string;
     created_at?: Date;
     updated_at?: Date;
     id?:string;

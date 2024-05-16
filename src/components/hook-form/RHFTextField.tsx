@@ -19,6 +19,7 @@ interface RHFTextFieldProps
   type?: ComponentProps<typeof Input>["type"];
   control: any;
   watch?: UseFormWatch<any>;
+  dir?:any
 }
 
 const RHFTextField: React.FunctionComponent<RHFTextFieldProps> = ({
@@ -27,6 +28,7 @@ const RHFTextField: React.FunctionComponent<RHFTextFieldProps> = ({
   control,
   watch,
   label,
+  dir,
   className,
   isOptional,
   placeholder,
@@ -48,7 +50,7 @@ const RHFTextField: React.FunctionComponent<RHFTextFieldProps> = ({
 
   return (
     <div className={cn("mb-spacing_3xl w-full flex gap-4 flex-col", className)}>
-      <Label className="">{label}</Label>
+      <Label className="" dir="rtl">{label}</Label>
       <FormField
         name={name as string}
         control={control}
@@ -56,6 +58,7 @@ const RHFTextField: React.FunctionComponent<RHFTextFieldProps> = ({
           <FormItem>
             <FormControl>
               <Input
+           
                 disabled={disabled}
                 endAdornmentClassName={endAdornmentClassName}
                 {...field}

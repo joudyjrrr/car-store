@@ -56,19 +56,7 @@ function RHFInputFile({
           className="absolute duration-150 left-0 opacity-5 w-full  h-[calc(100%-1.5rem)] cursor-pointer"
         />
         <div className="flex gap-4 items-center ">
-          <div className="">
-            {currentValue && (
-              <img
-                src={
-                  typeof currentValue === "string"
-                    ? currentValue
-                    : URL.createObjectURL(currentValue)
-                }
-                alt={currentValue.name}
-                className="w-40 h-28 mt-6 rounded-xl object-cover"
-              />
-            )}
-          </div>
+          
 
           <FormField
             control={control}

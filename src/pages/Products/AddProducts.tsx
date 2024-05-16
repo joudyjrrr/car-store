@@ -63,10 +63,10 @@ const cols: TableColumn<any>[] = [
 const AddProducts = () => {
   const form = useForm();
   return (
-    <PageContainer breadcrumb={[{ title: "اضافة منتج" }]}>
+    <PageContainer breadcrumb={[{ title: "اضافة منتج" }]} className="overflow-x-hidden">
       <Form {...form}>
         <form>
-          <div className="flex gap-8">
+          <div className="flex gap-8 max-md:flex-col">
             <div className="flex flex-col w-full">
               <RHFTextField
                 control={form.control}
@@ -148,7 +148,7 @@ const AddProducts = () => {
             label="الوصف"
           />
           <div className="bg-white px-6 my-6 py-2 flex flex-col gap-4 shadow rounded-lg">
-            <div className="flex gap-4 w-full justify-center">
+            <div className="flex max-md:flex-col gap-4 w-full justify-center">
               <SelectFiled
                 label="سنة الصنع"
                 placeholder="سنة الصنع"

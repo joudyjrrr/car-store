@@ -4,11 +4,11 @@ import Axios, {
   InternalAxiosRequestConfig,
 } from 'axios'
 import { toast } from 'react-hot-toast'
-// export const BASE_URL_IMG = `https://warsha.htc-company.com/public/getImage`
-export const BASE_URL_IMG = `http://127.0.0.1:8001/getImage`
+export const BASE_URL_IMG = `https://carstore.htc-company.com/getImage`
+
 const axios: AxiosInstance = Axios.create({
-  baseURL: "https://warsha.htc-company.com/public/api",
-  // baseURL: "http://127.0.0.1:8001/api",
+  // baseURL: "https://carstore.htc-company.com/api/dashboard",
+  baseURL: "http://127.0.0.1:8000/api/dashboard",
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",

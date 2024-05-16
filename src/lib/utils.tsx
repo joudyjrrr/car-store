@@ -62,4 +62,60 @@ type NavigationProjectProps = {
     path: "/customers",
     query: "",
   },
+  {
+    title: "السيارات",
+    path: "/cars",
+    icon: <SettingsIcons />,
+    list: [
+      {
+        titleLink: "موديلات السيارات",
+        path: "/car-model",
+        icon: <MdPayment size={"1.5rem"} className="me-4" />,
+        query: "",
+      },
+      {
+        titleLink: " سعة المحرك",
+        path: "/motor",
+        query: "",
+      },
+    
+      {
+        titleLink: " سنة الصنع",
+        path: "/carYear",
+        query: "",
+      },
+
+      {
+        titleLink: "شركات السيارات",
+        path: "/car-company",
+        icon: <MdPayment size={"1.5rem"} className="me-4" />,
+        query: "",
+      },
+    
+    ],
+  },
+  {
+    titleLink: "أنواع الموظفين",
+    icon: <img  src={customers} className="me-4 w-6" />,
+    path: "/employee-type",
+    query: "",
+  },
+  {
+    titleLink: "طرق الدفع",
+    icon: <img  src={customers} className="me-4 w-6" />,
+    path: "/pay-types",
+    query: "",
+  },
+  {
+    titleLink: "الماركات التجارية",
+    icon: <img  src={customers} className="me-4 w-6" />,
+    path: "/brand",
+    query: "",
+  },
+  {
+    titleLink: "الموردين",
+    icon: <img  src={customers} className="me-4 w-6" />,
+    path: "/supplier",
+    query: "",
+  },
 ];
