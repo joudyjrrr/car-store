@@ -7,8 +7,8 @@ import { toast } from 'react-hot-toast'
 export const BASE_URL_IMG = `https://carstore.htc-company.com/getImage`
 
 const axios: AxiosInstance = Axios.create({
-  // baseURL: "https://carstore.htc-company.com/api/dashboard",
-  baseURL: "http://127.0.0.1:8000/api/dashboard",
+  baseURL: "https://carstore.htc-company.com/api/dashboard",
+  // baseURL: "http://127.0.0.1:8000/api/dashboard",
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
