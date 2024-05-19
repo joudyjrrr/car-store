@@ -77,7 +77,7 @@ const AddProducts = () => {
               <SelectFiled
                 label="الماركة"
                 placeholder="الماركة"
-                name="category"
+                name="brand_id"
                 watch={form.watch}
                 options={[{ id: "0", name: "t" }]}
                 control={form.control}
