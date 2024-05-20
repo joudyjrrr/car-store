@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import axios from "@/lib/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const AddProducts = () => {
@@ -37,8 +39,10 @@ const AddProducts = () => {
       return data.data;
     },
   });
+  const [gallery, setGallry] = useState<any>([]);
+  // console.log(gallery);
+  const navigate = useNavigate();
   const submitHandler = (data: any) => {
-    console.log(data);
     const formData = new FormData() as any;
     data.name && formData.append("name", data.name);
     data.product_category_id &&
@@ -49,15 +53,19 @@ const AddProducts = () => {
     data.price_discount &&
       formData.append("price_discount", data.price_discount);
     data.current_count && formData.append("current_count", data.current_count);
-    data.bar_code && formData.append("bar_code", data.bar_code);
+    data.barcode && formData.append("barcode", data.barcode);
     data.is_active && formData.append("is_active", data.is_active);
     data.evaluation && formData.append("evaluation", data.evaluation);
     data.brand_id && formData.append("brand_id", data.brand_id);
-    // typeof data?.main_image_id === "object" &&
-    //   formData.append("main_image_id", data.main_image_id);
+    for (let i = 0; i < gallery.length; i++) {
+      formData.append(`image${i + 1}`, gallery[i]);
+    }
+    console.log(formData);
+
     mutate(formData, {
       onSuccess() {
         toast("تمت الاضافة بنجاح");
+        navigate("/product");
       },
       onError(error: any) {
         console.log(error?.response?.data);
@@ -72,8 +80,8 @@ const AddProducts = () => {
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(submitHandler)}>
-          <div className="flex gap-8 max-md:flex-col">
-            <div className="flex flex-col w-full">
+          <div className="flex flex-col gap-8 max-md:flex-col">
+            <div className="grid grid-cols-3 gap-2 w-full">
               <RHFTextField
                 control={form.control}
                 name="name"
@@ -125,7 +133,7 @@ const AddProducts = () => {
               />
               <RHFTextField
                 control={form.control}
-                name="bar_code"
+                name="barcode"
                 placeholder="الباركود"
                 label="الباركود"
               />
@@ -142,42 +150,30 @@ const AddProducts = () => {
                 <RHFSwitch name="is_active" control={form.control} checked />
               </div>
             </div>
-            <div className="flex  flex-col w-full">
+            <div className="flex flex-col w-full">
               <RHFInputFile
+                labelClasName="!text-xs"
+                className="w-full"
                 control={form.control}
-                name="main_image_id"
+                name="image"
                 setValue={form.setValue}
                 watch={form.watch}
-                label="اضافة صورة رئيسية"
+                label="اضافة الصور "
+                multiple
+                gallery={gallery}
+                setGallry={setGallry}
               />
-              <div className="flex gap-2 w-full justify-between">
-                <RHFInputFile
-                  labelClasName="!text-xs"
-                  className="w-full"
-                  control={form.control}
-                  name="image"
-                  setValue={form.setValue}
-                  watch={form.watch}
-                  label="اضافة صورة فرعية"
-                />
-                <RHFInputFile
-                  className="w-full"
-                  labelClasName="!text-xs"
-                  control={form.control}
-                  name="image"
-                  setValue={form.setValue}
-                  watch={form.watch}
-                  label="اضافة صورة فرعية"
-                />
-                <RHFInputFile
-                  className="w-full"
-                  labelClasName="!text-xs"
-                  control={form.control}
-                  name="image"
-                  setValue={form.setValue}
-                  watch={form.watch}
-                  label="اضافة صورة فرعية"
-                />
+              <div className="grid grid-cols-3 gap-2">
+                {gallery.map((g: any) => (
+                  <img
+                    width={40}
+                    crossOrigin="anonymous"
+                    height={40}
+                    className="w-full h-full  rounded-xl object-cover"
+                    alt=""
+                    src={URL.createObjectURL(g)}
+                  />
+                ))}
               </div>
             </div>
           </div>

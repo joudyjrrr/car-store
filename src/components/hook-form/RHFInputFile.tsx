@@ -1,6 +1,11 @@
 import { cn } from "@/lib/utils";
 import React, { useCallback, useState } from "react";
-import { useFormContext } from "react-hook-form";
+import {
+  Control,
+  UseFormSetValue,
+  UseFormWatch,
+  useFormContext,
+} from "react-hook-form";
 import {
   FormControl,
   FormField,
@@ -15,26 +20,36 @@ interface RHFInputFileProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   name: string;
-  control: any;
-  setValue: any;
-  watch: any;
-  labelClasName?:string;
+  multiple?: boolean;
+  control: Control<any, any>;
+  setValue: UseFormSetValue<any>;
+  watch: UseFormWatch<any>;
+  gallery?: any;
+  setGallry?: any;
+  labelClasName?: any;
 }
 
 function RHFInputFile({
   name,
   label,
+  gallery,
+  setGallry,
   className,
   control,
   watch,
   setValue,
   labelClasName,
+  multiple,
   ...other
 }: RHFInputFileProps) {
   const changeHandler = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const newFile = e.target.files?.[0];
-      setValue(name, newFile as File);
+      if (multiple) {
+        setGallry((file: any) => [...file, newFile as File]);
+      } else {
+        setValue(name, newFile as File);
+      }
     },
     [name, setValue]
   );
@@ -56,8 +71,6 @@ function RHFInputFile({
           className="absolute duration-150 left-0 opacity-5 w-full  h-[calc(100%-1.5rem)] cursor-pointer"
         />
         <div className="flex gap-4 items-center ">
-          
-
           <FormField
             control={control}
             name={name}
@@ -68,7 +81,9 @@ function RHFInputFile({
               >
                 <div className="flex flex-col items-center justify-center w-full">
                   <div className="flex justify-center items-center gap-1 w-full">
-                    <p className={`text-brand-700 max-sm:text-xs flex items-center justify-center cursor-default ${labelClasName}`}>
+                    <p
+                      className={`text-brand-700 max-sm:text-xs flex items-center justify-center cursor-default ${labelClasName}`}
+                    >
                       {label}
                     </p>
 

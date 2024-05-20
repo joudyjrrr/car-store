@@ -16,28 +16,31 @@ import { IoIosSearch } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { FaEye } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
-
-const data = [
-  {
-    id: "1",
-    name: "fuel shell Helix ",
-    category: "fual",
-    price: "$690.00",
-    discount: "120$",
-  },
-];
+import { useQuery } from "@tanstack/react-query";
+import axios, { BASE_URL_IMG } from "@/lib/axios";
+import { DeleteModal } from "@/components/dialog";
 
 const Products = () => {
   const form = useForm();
   const navigate = useNavigate();
+  const { data, isFetching, error, refetch } = useQuery({
+    queryKey: ["get-prod"],
+    queryFn: async () => {
+      const { data } = await axios.get(`/getProduct`);
+      return data.data;
+    },
+  });
+  // console.log(data?.data);
+
   const cols: TableColumn<any>[] = [
     {
-      id: "name",
+      id: "image.file_name",
       name: "الصورة",
       cell: (row) => (
-        <div className="text-sm">
-          <Logo width="50" height="50" />
-        </div>
+        <img
+          className="w-[60px] h-[60px] my-6"
+          src={`${BASE_URL_IMG}/${row.images[0]?.id}/${row.images[0]?.file_name}`}
+        />
       ),
     },
     {
@@ -48,7 +51,7 @@ const Products = () => {
     {
       id: "name",
       name: "الصنف",
-      cell: (row) => <div className="text-sm">{row.category}</div>,
+      cell: (row) => <div className="text-sm">{row.product_category.name}</div>,
     },
     {
       id: "name",
@@ -57,8 +60,19 @@ const Products = () => {
     },
     {
       id: "name",
-      name: "الحسم",
-      cell: (row) => <div className="text-sm line-through">{row.discount}</div>,
+      name: "التقييم",
+      cell: (row) => (
+        <div className="text-sm line-through">{row.evaluation}</div>
+      ),
+    },
+    {
+      id: "name",
+      name: "نشط",
+      cell: (row) => (
+        <div className="text-sm">
+          {row.is_active == 0 ? "No" : "Yes"}
+        </div>
+      ),
     },
     {
       id: "name",
@@ -70,8 +84,10 @@ const Products = () => {
             onClick={() => navigate(`/product/${row.id}`)}
             className=" text-gray-600 text-2xl  h-full p-1 border-e border-[#D5D5D5]"
           />
-          <BiSolidTrashAlt
-            className={`text-destructive text-2xl  h-full p-1`}
+          <DeleteModal
+            MassegeSuccess="تم الحذف بنجاح"
+            apiPath={`/deleteProduct/${row.id}`}
+            refetch={refetch}
           />
         </div>
       ),
@@ -79,13 +95,19 @@ const Products = () => {
   ];
 
   return (
-    <PageContainer breadcrumb={[{ title: "Product Stock" }]} className="overflow-x-hidden">
+    <PageContainer
+      breadcrumb={[{ title: "Product Stock" }]}
+      className="overflow-x-hidden"
+    >
       <div className="w-full flex justify-end">
         <Button onClick={() => navigate("/product/add")}>اضافة منتج</Button>
       </div>
       <Form {...form}>
-      <div className="bg-white my-8  max-md:flex-col max-md:w-fit cursor-pointer text-center   border border-gray-200 rounded-3xl flex justify-center items-center">
-      <img src={path} className="w-14  h-14 border-e border-gray-200 p-4 max-md:hidden" />
+        <div className="bg-white my-8  max-md:flex-col max-md:w-fit cursor-pointer text-center   border border-gray-200 rounded-3xl flex justify-center items-center">
+          <img
+            src={path}
+            className="w-14  h-14 border-e border-gray-200 p-4 max-md:hidden"
+          />
           <p className="border-e w-full flex justify-center border-gray-200 p-4 ">
             فلترة حسب
           </p>
@@ -138,7 +160,8 @@ const Products = () => {
       <Table
         table={{
           columns: cols,
-          data: data,
+          data: data?.data ?? [],
+          loading: isFetching,
         }}
       />
     </PageContainer>
