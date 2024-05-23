@@ -6,15 +6,82 @@ import RHFTextArea from "@/components/hook-form/RHFTextArea";
 import RHFTextField from "@/components/hook-form/RHFTextField";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import axios from "@/lib/axios";
+import axios, { BASE_URL_IMG } from "@/lib/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
+import image from "../../assets/Login.jpg";
+import MultiSelectField from "@/components/hook-form/MultiSelectField";
 
 const AddProducts = () => {
+  const { id } = useParams();
+  const [gallery, setGallry] = useState<any>([]);
   const form = useForm();
+  const { data: cars } = useQuery({
+    queryKey: ["get-cars", id],
+    queryFn: async () => {
+      const { data } = await axios.get(`/getCars`);
+      return data.data;
+    },
+  });
+  console.log(cars);
+  const carYearOptions = cars
+    ? cars.map((car: any) => ({
+        value: car.id,
+        label: car.car_year?.name,
+      }))
+    : [];
+  const car_company_name = cars
+    ? cars.map((car: any) => ({
+        value: car.id,
+        label: car.car_company?.name,
+      }))
+    : [];
+  const car_motor_name = cars
+    ? cars.map((car: any) => ({
+        value: car.id,
+        label: car.car_motor?.name,
+      }))
+    : [];
+  const car_model_name = cars
+    ? cars.map((car: any) => ({
+        value: car.id,
+        label: car.car_model?.name,
+      }))
+    : [];
+  console.log(carYearOptions);
+  const { data, isFetching, error, refetch } = useQuery({
+    queryKey: ["get-prod", id],
+    queryFn: async () => {
+      const { data } = await axios.get(`/getProductById/${id}`);
+      return data.data;
+    },
+  });
+
+  useEffect(() => {
+    if (data) {
+      form.setValue("name", data?.product?.name);
+      form.setValue("price", data?.product?.price);
+      form.setValue("price_discount", data?.product?.price_discount);
+      form.setValue("cost", data?.product?.cost);
+      form.setValue("current_count", data?.product?.current_count);
+      form.setValue("barcode", data?.product?.barcode);
+      form.setValue("is_active", data?.product?.is_active);
+      form.setValue("evaluation", data?.product?.evaluation);
+      form.setValue("brand_id", data?.product?.brand_id);
+      form.setValue("product_category_id", data?.product?.product_category_id);
+      form.setValue("description", data?.product?.description);
+      setGallry(
+        data?.product?.images?.map(
+          (g: any) => `${BASE_URL_IMG}/${g.id}/${g.file_name}`
+        ) || []
+      );
+    }
+  }, [data, form]);
+
+  console.log(data?.product!);
   const { mutate, isPending } = useMutation({
     mutationFn: async (data) => {
       const res = await axios.post(`/createProduct`, data, {
@@ -25,6 +92,17 @@ const AddProducts = () => {
       return res;
     },
   });
+  const { mutate: Update } = useMutation({
+    mutationFn: async (data) => {
+      const res = await axios.post(`/updateProduct/${id}`, data, {
+        headers: {
+          "Content-Type": "multipart/formData",
+        },
+      });
+      return res;
+    },
+  });
+  console.log(gallery);
   const { data: categoryOptions } = useQuery({
     queryKey: ["get-prod-cat"],
     queryFn: async () => {
@@ -39,11 +117,10 @@ const AddProducts = () => {
       return data.data;
     },
   });
-  const [gallery, setGallry] = useState<any>([]);
-  // console.log(gallery);
   const navigate = useNavigate();
   const submitHandler = (data: any) => {
     const formData = new FormData() as any;
+    formData.append("car_id", data.car_id);
     data.name && formData.append("name", data.name);
     data.product_category_id &&
       formData.append("product_category_id", data.product_category_id);
@@ -57,25 +134,37 @@ const AddProducts = () => {
     data.is_active && formData.append("is_active", data.is_active);
     data.evaluation && formData.append("evaluation", data.evaluation);
     data.brand_id && formData.append("brand_id", data.brand_id);
-    for (let i = 0; i < gallery.length; i++) {
+    for (let i = 0; i < gallery?.length; i++) {
       formData.append(`image${i + 1}`, gallery[i]);
     }
     console.log(formData);
-
-    mutate(formData, {
-      onSuccess() {
-        toast("تمت الاضافة بنجاح");
-        navigate("/product");
-      },
-      onError(error: any) {
-        console.log(error?.response?.data);
-        toast(error?.response?.data.message);
-      },
-    });
+    if (id) {
+      Update(formData, {
+        onSuccess() {
+          toast("تم التعديل بنجاح");
+          navigate("/product");
+        },
+        onError(error: any) {
+          console.log(error?.response?.data);
+          toast(error?.response?.data.message);
+        },
+      });
+    } else {
+      mutate(formData, {
+        onSuccess() {
+          toast("تمت الاضافة بنجاح");
+          navigate("/product");
+        },
+        onError(error: any) {
+          console.log(error?.response?.data);
+          toast(error?.response?.data.message);
+        },
+      });
+    }
   };
   return (
     <PageContainer
-      breadcrumb={[{ title: "اضافة منتج" }]}
+      breadcrumb={[{ title: id ? "تعديل المنتج" : "اضافة منتج" }]}
       className="overflow-x-hidden"
     >
       <Form {...form}>
@@ -142,6 +231,7 @@ const AddProducts = () => {
                 name="evaluation"
                 min={1}
                 max={5}
+                type="number"
                 placeholder="تقييم المنتج"
                 label="تقييم المنتج"
               />
@@ -164,14 +254,14 @@ const AddProducts = () => {
                 setGallry={setGallry}
               />
               <div className="grid grid-cols-3 gap-2">
-                {gallery.map((g: any) => (
+                {gallery?.map((g: any) => (
                   <img
                     width={40}
                     crossOrigin="anonymous"
                     height={40}
                     className="w-full h-full  rounded-xl object-cover"
                     alt=""
-                    src={URL.createObjectURL(g)}
+                    src={id ? g : URL.createObjectURL(g)}
                   />
                 ))}
               </div>
@@ -184,8 +274,44 @@ const AddProducts = () => {
             placeholder="وصف المنتج هنا"
             label="الوصف"
           />
+          <div className="bg-white px-6 my-6 py-2 flex flex-col gap-4 shadow rounded-lg">
+            <div className="flex max-md:flex-col gap-4 w-full justify-center">
+              <MultiSelectField
+                control={form.control}
+                label="سنة الصنع"
+                name="car_id"
+                watch={form.watch}
+                options={carYearOptions}
+                placeholder="سنة الصنع"
+              />
+              <MultiSelectField
+                label="حجم المحرك"
+                placeholder="حجم المحرك"
+                name="car_id"
+                watch={form.watch}
+                options={car_motor_name}
+                control={form.control}
+              />
+              <MultiSelectField
+                label="موديل السيارة"
+                placeholder="موديل السيارة"
+                name="car_id"
+                watch={form.watch}
+                options={car_model_name}
+                control={form.control}
+              />
+              <MultiSelectField
+                label="شركة السيارة"
+                placeholder="شركة السيارة"
+                name="car_id"
+                watch={form.watch}
+                options={car_company_name}
+                control={form.control}
+              />
+            </div>
+          </div>
           <div className="flex gap-2 my-6 justify-center w-full">
-            <Button className="w-full">اضافة</Button>
+            <Button className="w-full">{id ? "تعديل" : "اضافة"}</Button>
             <Button className="w-full" variant={`cancel`}>
               الغاء
             </Button>

@@ -39,7 +39,7 @@ const Products = () => {
       cell: (row) => (
         <img
           className="w-[60px] h-[60px] my-6"
-          src={`${BASE_URL_IMG}/${row.images[0]?.id}/${row.images[0]?.file_name}`}
+          src={`${BASE_URL_IMG}/${row.images?.[0]?.id!}/${row.images?.[0]?.file_name!}`}
         />
       ),
     },
@@ -69,9 +69,7 @@ const Products = () => {
       id: "name",
       name: "نشط",
       cell: (row) => (
-        <div className="text-sm">
-          {row.is_active == 0 ? "No" : "Yes"}
-        </div>
+        <div className="text-sm">{row.is_active == 0 ? "No" : "Yes"}</div>
       ),
     },
     {
@@ -79,7 +77,10 @@ const Products = () => {
       name: "التحكم",
       cell: (row) => (
         <div className="bg-[#FAFBFD] border cursor-pointer  h-[30px] border-[#D5D5D5] rounded-lg flex items-center ">
-          <FiEdit className=" text-gray-600 text-2xl  h-full p-1 border-e border-[#D5D5D5]" />
+          <FiEdit
+            onClick={() => navigate(`/editProduct/${row.id}`)}
+            className=" text-gray-600 text-2xl  h-full p-1 border-e border-[#D5D5D5]"
+          />
           <FaEye
             onClick={() => navigate(`/product/${row.id}`)}
             className=" text-gray-600 text-2xl  h-full p-1 border-e border-[#D5D5D5]"

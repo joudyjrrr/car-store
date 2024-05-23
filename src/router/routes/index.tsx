@@ -15,22 +15,20 @@ export default function Routes() {
   const Category = lazy(() => import("../../pages/Category/Category"));
   const Customers = lazy(() => import("../../pages/Customers/Customers"));
   const CarModel = lazy(() => import("../../pages/Cars/CarModel/CarModel"));
-  const CarHorsepower = lazy(() => import("../../pages/Cars/CarHorsepower/CarHorsepower"));
+  const CarHorsepower = lazy(
+    () => import("../../pages/Cars/CarHorsepower/CarHorsepower")
+  );
   const CarYear = lazy(() => import("../../pages/Cars/CarYear/CarYear"));
-  const CarCompany = lazy(() => import("../../pages/Cars/CarCompany/CarCompany"));
-  const EmployeeType = lazy(() => import("../../pages/EmployeeType/EmployeeType"));
+  const CarCompany = lazy(
+    () => import("../../pages/Cars/CarCompany/CarCompany")
+  );
+  const EmployeeType = lazy(
+    () => import("../../pages/EmployeeType/EmployeeType")
+  );
   const PayTypes = lazy(() => import("../../pages/PayTypes/PayTypes"));
   const Brand = lazy(() => import("../../pages/Brand/Brand"));
   const SiginUp = lazy(() => import("../../pages/Auth/SiginUp"));
   const Supplier = lazy(() => import("../../pages/Supplier/Supplier"));
-
-
-
-
-
-
-
-
 
   return createBrowserRouter([
     {
@@ -60,6 +58,10 @@ export default function Routes() {
         {
           path: "/product",
           element: <Products />,
+        },
+        {
+          path: "/editProduct/:id",
+          element: <AddProducts />,
         },
         {
           path: "/product/:id",
@@ -109,7 +111,6 @@ export default function Routes() {
           path: "/supplier",
           element: <Supplier />,
         },
-      
       ],
     },
   ]);
