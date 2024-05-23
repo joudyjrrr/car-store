@@ -44,7 +44,7 @@ const ShowProduct = () => {
           </div>
           <div className="bg-white p-4 rounded-lg flex justify-between shadow items-center">
             <p>Status</p>
-            <Switch dir="ltr" checked={data?.product.is_active === 1} />
+            <Switch dir="ltr" checked={data?.product?.is_active === 1} />
           </div>
         </div>
         <div className="flex flex-col w-full h-full gap-4">
