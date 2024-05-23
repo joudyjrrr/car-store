@@ -10,26 +10,29 @@ import { TableColumn } from "react-data-table-component";
 import { useForm } from "react-hook-form";
 import { BiSolidTrashAlt } from "react-icons/bi";
 import { CiCircleMinus, CiCirclePlus } from "react-icons/ci";
-import CouponCode from "./CouponCode";
+import orderImg from "../../assets/svgs/image 56.svg";
+import delvrryImg from "../../assets/svgs/image 56(1).svg";
+
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "@/lib/axios";
 import { Form } from "@/components/ui/form";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { CustmersSelect, PayTypeSelect } from "@/api/ApiQuery";
+import SelectLocation from "./SelectLocation";
+import SelectCustomer from "./SelectCustmers";
 const ContainerSellItem: FC<{
   setSelectedProducts: (arg: any) => void;
   selectedProducts: any;
   calculateTotalPrice: any;
   selectCurrency?: any;
-  totalCost: any;
+
   totalPrice: any;
   setTotalPrice: any;
   setSelectCurrency?: any;
-  calculateTotalCost: any;
 }> = ({
   selectedProducts,
-  totalCost,
-  calculateTotalCost,
+
   setSelectedProducts,
   totalPrice,
   setTotalPrice,
@@ -37,7 +40,7 @@ const ContainerSellItem: FC<{
 }) => {
   const { mutate, isPending } = useMutation({
     mutationFn: async (data) => {
-      const res = await axios.post(`/createBuy`, data);
+      const res = await axios.post(`/createSellItem`, data);
       return res;
     },
   });
@@ -64,10 +67,11 @@ const ContainerSellItem: FC<{
   };
 
   const handleProductDelete = (product: any) => {
-    const updatedProducts = selectedProducts.filter((p : any) => p.id !== product.id);
+    const updatedProducts = selectedProducts.filter(
+      (p: any) => p.id !== product.id
+    );
     setSelectedProducts(updatedProducts);
     calculateTotalPrice(updatedProducts);
-    calculateTotalCost(updatedProducts);
   };
 
   const cols: TableColumn<any>[] = [
@@ -81,11 +85,7 @@ const ContainerSellItem: FC<{
       name: "السعر",
       cell: (row) => <div>{row.price}</div>,
     },
-    {
-      id: "price",
-      name: "الكلفة",
-      cell: (row) => <div>{row.cost}</div>,
-    },
+
     {
       id: "quantity",
       name: "الكمية",
@@ -128,72 +128,140 @@ const ContainerSellItem: FC<{
       ),
     },
   ];
-  const { data: Supplier } = useQuery({
-    queryKey: ["get-Supplier"],
-    queryFn: async () => {
-      const { data } = await axios.get(`/getSupplier`);
-      return data.data;
-    },
-    select: (data) =>
-      data?.data?.map((data: any) => ({
-        id: data.id,
-        name: data.money,
-      })),
-  });
+
   // console.log(Supplier)
 
-  const [openCode, setOpenCode] = useState(false);
+  const { data: Customer } = CustmersSelect();
+  const [openDelvery, setOpenDelevry] = useState(false);
+  const [openLocation, setOpenLocation] = useState(false);
+  const [openCustmers, setopenCustmers] = useState(false);
 
   const methods = useForm();
-  const navigate = useNavigate()
-
+  const navigate = useNavigate();
+  const { handleSubmit, watch, reset, setValue } = methods;
   const Submit = (data: any) => {
-    const buy_info = selectedProducts.map((item) => {
+    // console.log(data, selectedProducts);
+
+    const buy_info = selectedProducts.map((item: any) => {
       return {
         product_id: item.id,
         quantity: item.quantity,
         price: item.price,
-        cost:item.cost
       };
     });
+
     const body = {
       ...data,
+      status: "waiting",
       buy_info,
+
       total_price: totalPrice,
-      total_cost: totalCost,
     };
+    delete body.order_typr;
+    console.log(body);
+    console.log(body);
     mutate(body, {
       onSuccess() {
         toast("تمت عملية الشراء بنجاح");
-        navigate("/pos/order")
+        // navigate("/pos/order");
       },
     });
   };
+  const [customerName,setCustomerName] = useState()
   return (
-    <div className="p-4 bg-white rounded-xl w-[350px] max-sm:w-full h-fit transition-all drop-shadow-lg flex flex-col gap-4">
+    <div className="p-4 bg-white rounded-xl w-[450px] max-sm:w-full h-fit transition-all drop-shadow-lg flex flex-col gap-4">
       <Form {...methods}>
         <form
           onSubmit={methods.handleSubmit(Submit)}
           className="flex flex-col gap-2"
         >
-          
-          <RHFSelect
-            name="supplier_id"
-            options={Supplier}
-            label="اختر مورد"
-            control={methods.control}
-            watch={methods.watch}
-          />
-          <RHFTextField
-            label="العنوان"
-            name="title"
-            control={methods.control}
-          />
-          <RHFTextField
-            label="الوصف"
-            name="description"
-            control={methods.control}
-          />
+          <div className="grid grid-cols-2 gap-2">
+            {!methods.watch("customer_id") ? (
+              <Button className="mt-10" onClick={() => setopenCustmers(true)}>
+                اضافة زبون
+              </Button>
+            ) : (
+              <p className="text-xl mt-10 ">الزبون:{customerName}</p>
+            )}
+            {/* <RHFSelect
+              name="status"
+              options={[
+                { id: "waiting", name: "Waiting" },
+                { id: "approved", name: "Approved" },
+                { id: "prepared", name: "Prepared" },
+                { id: "on_way", name: "On the Way" },
+                { id: "delivered", name: "Delivered" },
+                { id: "paymented", name: "Paymented" },
+                { id: "reject", name: "Reject" },
+              ]}
+              label="الحالة"
+              control={methods.control}
+              watch={methods.watch}
+            /> */}
+
+            <RHFTextField
+              label="الباركود"
+              name="barcode"
+              control={methods.control}
+            />
+            <RHFRadioGroup
+              className="col-span-2"
+              onChange={(value) => value == "delivery" && setOpenDelevry(true)}
+              label="نوع الطلبية"
+              withoutIcon
+              name="order_typr"
+              options={[
+                { id: "store", name: "Store", icon: <img src={orderImg} /> },
+                {
+                  id: "delivery",
+                  name: "Delivery",
+                  icon: <img src={delvrryImg} />,
+                },
+              ]}
+            />
+
+            {methods.watch("order_typr") === "delivery" && (
+              <>
+                <RHFSelect
+                  name="driver_id"
+                  options={Customer}
+                  label="اختر سائق"
+                  control={methods.control}
+                  watch={methods.watch}
+                />
+
+                <RHFTextField
+                  label="سعر التوصيل"
+                  type="number"
+                  min={1}
+                  name="delivery_cost"
+                  control={methods.control}
+                />
+                {methods.watch("longitude") && methods.watch("latitude") ? (
+                  <>
+                    <RHFTextField
+                      label="خط الطول"
+                      name="longitude"
+                      control={methods.control}
+                    />
+                    <RHFTextField
+                      label="خط العرض"
+                      name="latitude"
+                      control={methods.control}
+                    />
+                  </>
+                ) : (
+                  <Button
+                    type="button"
+                    onClick={() => setOpenLocation(true)}
+                    className="mt-10"
+                  >
+                    تحديد العنوان{" "}
+                  </Button>
+                )}
+              </>
+            )}
+          </div>
 
           {selectedProducts?.length > 0 && (
             <div className="flex flex-col">
@@ -205,8 +273,6 @@ const ContainerSellItem: FC<{
                 }}
               />
               <p>السعر الاجمالي :{totalPrice}</p>
-              <p>الكلفة الاجمالية :{totalCost}</p>
-
             </div>
           )}
 
@@ -221,9 +287,18 @@ const ContainerSellItem: FC<{
           </div>
         </form>
       </Form>
-      {/* <DeliveryInfo setOpen={setOpenDelevry} open={openDelvery} /> */}
-      <CouponCode open={openCode} setOpen={setOpenCode} />
-      {/* <CompleteOrder open={openComplete} setOpen={setOpenComplete} /> */}
+      <SelectLocation
+        open={openLocation}
+        setOpen={() => setOpenLocation(false)}
+        setValue={methods.setValue}
+      />
+      <SelectCustomer
+      setCustomerName={setCustomerName}
+        customers={Customer}
+        open={openCustmers}
+        setOpen={() => setopenCustmers(false)}
+        setValue={methods.setValue}
+      />
     </div>
   );
 };

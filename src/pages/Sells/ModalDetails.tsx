@@ -7,7 +7,7 @@ import { CiCircleMinus, CiCirclePlus } from "react-icons/ci";
 
 const ModalDetails: FC<{
   open: boolean;
-  calculateTotalCost:any
+
   calculateTotalPrice: any;
   selectedProducts: ProductData[];
   setSelectedProducts: (a: ProductData[]) => void;
@@ -21,7 +21,7 @@ const ModalDetails: FC<{
   Product,
   setSelectedProduc,
   selectedProducts,
-  calculateTotalCost,
+
   setSelectedProducts,
 }) => {
   const handleQuantityChange = (action: string) => {
@@ -51,7 +51,6 @@ const ModalDetails: FC<{
     const updatedProducts = [...selectedProducts, updatedProduct];
     setSelectedProducts(updatedProducts);
     calculateTotalPrice(updatedProducts);
-    calculateTotalCost(updatedProducts)
   };
   const handleProductSelect = () => {
     if (selectedProducts.includes(Product)) {
@@ -95,7 +94,7 @@ const ModalDetails: FC<{
             <div className="flex flex-col">
               <span>{Product?.name}</span>
               <span>السعر:{Product?.price}</span>
-              <span>الكلفة:{Product?.cost}</span>
+              {/* <span>الكلفة:{Product?.cost}</span> */}
               {/* <span>{Product.}</span> */}
             </div>
             {/* <img

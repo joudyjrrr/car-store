@@ -19,6 +19,7 @@ const Supplier = () => {
       const { data } = await axios.get(`/getSupplier`);
       return data.data;
     },
+    
   });
   const cols: TableColumn<any>[] = [
     {

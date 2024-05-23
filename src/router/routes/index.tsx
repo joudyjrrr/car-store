@@ -23,6 +23,10 @@ export default function Routes() {
   const Brand = lazy(() => import("../../pages/Brand/Brand"));
   const SiginUp = lazy(() => import("../../pages/Auth/SiginUp"));
   const Supplier = lazy(() => import("../../pages/Supplier/Supplier"));
+  const OrdersS = lazy(() => import("../../pages/POS/Orders/Orders"));
+  const Sells = lazy(() => import("../../pages/Sells/Sells"));
+
+
 
 
 
@@ -50,8 +54,21 @@ export default function Routes() {
           element: <Dashboard />,
         },
         {
+          path: "/sell",
+          element: <Sells />,
+        },
+        {
           path: "/pos",
           element: <SellItem />,
+        },
+      
+        {
+          path: "/pos/order",
+          element: <OrdersS />,
+        },
+        {
+          path: "/pos/order",
+          element: <OrdersS />,
         },
         {
           path: "/order",

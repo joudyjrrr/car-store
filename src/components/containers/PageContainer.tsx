@@ -36,7 +36,7 @@ function PageContainer({
   // const [filterState, setFilterState] = useState(false);
   const location = useLocation();
   return (
-    <main className={`w-full  px-8 max-md:px-1 pt-8  bg-gray-50 max ${className}`}>
+    <main className={`w-full  px-8 max-md:px-1 pt-8  bg-gray-50  ${className}`}>
       {breadcrumb && (
         <Breadcrumb className="border-b border-[#DBDAD] pb-4  mb-8 w-fit">
           <BreadcrumbList>

@@ -98,7 +98,7 @@ function SideBar() {
                     {({ isActive }) => (
                       <AccordionContent
                         onClick={() => {
-                          localStorage.setItem("reload", "true");
+                          // localStorage.setItem("relo ad", "true");
                         }}
                         className={cn(
                           "ps-4 hover:bg-white transition-all py-3 hover:text-primary flex gap-2",
