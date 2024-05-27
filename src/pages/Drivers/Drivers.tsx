@@ -1,25 +1,25 @@
 import { PageContainer } from "@/components/containers";
-import { DeleteModal } from "@/components/dialog";
-import { Table } from "@/components/ui/Layout";
 import { Button } from "@/components/ui/button";
-import axios, { BASE_URL_IMG } from "@/lib/axios";
-import { ModalStates } from "@/types";
-import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
+import AddDrivers from "./AddDrivers";
+import { useQuery } from "@tanstack/react-query";
+import axios, { BASE_URL_IMG } from "@/lib/axios";
 import { TableColumn } from "react-data-table-component";
 import { FiEdit } from "react-icons/fi";
-import AddSupplier from "./AddSupplier";
+import { DeleteModal } from "@/components/dialog";
+import { Table } from "@/components/ui/Layout";
+import { ModalStates } from "@/types";
 
-const Supplier = () => {
-  const [modalState, setModalState] = useState<ModalStates>(null);
+const Drivers = () => {
+  const [open, setOpen] = useState<ModalStates>(null);
+
   const [selectedRow, setSelectedRow] = useState<any>();
   const { data, isFetching, error, refetch } = useQuery({
-    queryKey: ["get-Supplier"],
+    queryKey: ["get-Driver"],
     queryFn: async () => {
-      const { data } = await axios.get(`/getSupplier`);
+      const { data } = await axios.get(`/getDriver`);
       return data.data;
     },
-    
   });
   const cols: TableColumn<any>[] = [
     {
@@ -38,15 +38,20 @@ const Supplier = () => {
       cell: (row) => <div title={row.name}>{row.user.name}</div>,
     },
     {
-        id: "name",
-        name: "Mony",
-        cell: (row) => <div title={row.name}>{row.money}</div>,
-      },
-      {
-        id: "name",
-        name: "Mony",
-        cell: (row) => <div title={row.name}>{row.opening_balance}</div>,
-      },
+      id: "name",
+      name: "العنوان",
+      cell: (row) => <div title={row.name}>{row.user.address}</div>,
+    },
+    {
+      id: "name",
+      name: "المركبة",
+      cell: (row) => <div title={row.name}>{row.vehicle}</div>,
+    },
+    {
+      id: "name",
+      name: "الصندوق",
+      cell: (row) => <div title={row.name}>{row.box}</div>,
+    },
     {
       id: "actions",
       name: "التحكم",
@@ -55,7 +60,7 @@ const Supplier = () => {
           <Button
             variant={"link"}
             onClick={() => {
-              setModalState("edit");
+              setOpen("edit");
               setSelectedRow(row);
             }}
           >
@@ -64,7 +69,7 @@ const Supplier = () => {
 
           <DeleteModal
             MassegeSuccess="تم الحذف بنجاح"
-            apiPath={`/deleteSupplier/${row.id}`}
+            apiPath={`/deleteDriver/${row.id}`}
             refetch={refetch}
           />
         </div>
@@ -72,25 +77,25 @@ const Supplier = () => {
     },
   ];
   return (
-    <PageContainer breadcrumb={[{ title: "الموردين" }]}>
-      <div className="flex justify-end w-full my-4">
-        <Button onClick={() => setModalState("add")}>أضافة</Button>
+    <PageContainer breadcrumb={[{ title: "السائقين" }]}>
+      <div className="w-full flex justify-end mb-4">
+        <Button onClick={() => setOpen("add")}>اضافة سائق </Button>
       </div>
       <Table
         table={{
           columns: cols,
-          data: data?.data ?? [],
+          data: data ?? [],
           loading: isFetching,
         }}
       />
-      <AddSupplier
-      setSelectedRow={selectedRow}
-        formValues={modalState === "edit" ? selectedRow : null}
-        open={modalState === "add" || modalState === "edit"}
-        onClose={() => setModalState(null)}
+      <AddDrivers
+        setSelectedRow={selectedRow}
+        formValues={open === "edit" ? selectedRow : null}
+        open={open === "add" || open === "edit"}
+        setOpen={() => setOpen(null)}
       />
     </PageContainer>
   );
 };
 
-export default Supplier;
+export default Drivers;

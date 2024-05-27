@@ -8,13 +8,15 @@ import Login from "@/pages/Login/Login";
 export default function Routes() {
   const Dashboard = lazy(() => import("../../pages/Dashboard"));
   const SellItem = lazy(() => import("../../pages/POS/SellItem"));
-  const Orders = lazy(() => import("../../pages/Orders/Orders"));
+  const Orders = lazy(() => import("../../pages/Orders/OrdersSell"));
   const Products = lazy(() => import("../../pages/Products/Products"));
   const ShowProduct = lazy(() => import("../../pages/Products/ShowProduct"));
   const AddProducts = lazy(() => import("../../pages/Products/AddProducts"));
   const Category = lazy(() => import("../../pages/Category/Category"));
   const Customers = lazy(() => import("../../pages/Customers/Customers"));
   const CarModel = lazy(() => import("../../pages/Cars/CarModel/CarModel"));
+  const Carss = lazy(() => import("../../pages/Cars/Carss/Carss"));
+
   const CarHorsepower = lazy(
     () => import("../../pages/Cars/CarHorsepower/CarHorsepower")
   );
@@ -31,6 +33,10 @@ export default function Routes() {
   const Supplier = lazy(() => import("../../pages/Supplier/Supplier"));
   const OrdersS = lazy(() => import("../../pages/POS/Orders/Orders"));
   const Sells = lazy(() => import("../../pages/Sells/Sells"));
+  const Drivers = lazy(() => import("../../pages/Drivers/Drivers"));
+  const CarColor = lazy(() => import("../../pages/Cars/CarColor/CarColor"));
+
+
 
 
 
@@ -52,17 +58,30 @@ export default function Routes() {
           element: <Dashboard />,
         },
         {
+          path: "/drivers",
+          element: <Drivers />,
+        },
+        {
           path: "/sell",
+          element: <Sells />,
+        },
+        {
+          path: "/sell/:id",
           element: <Sells />,
         },
         {
           path: "/pos",
           element: <SellItem />,
         },
+        
       
         {
           path: "/pos/order",
           element: <OrdersS />,
+        },
+        {
+          path: "/cars/car",
+          element: <Carss />,
         },
         {
           path: "/pos/order",
@@ -107,6 +126,10 @@ export default function Routes() {
         {
           path: "/cars/carYear",
           element: <CarYear />,
+        },
+        {
+          path: "/cars/car-color",
+          element: <CarColor />,
         },
         {
           path: "/cars/car-company",

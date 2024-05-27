@@ -32,19 +32,19 @@ export const NavigationProjects: NavigationProjectProps[] = [
     query: "",
   },
   {
-    title: "البيع السريع",
+    title: "المشتريات",
     icon: <img src={pos} className="me-4 w-6" />,
     path: "/pos",
     query: "",
     list: [
       {
-        titleLink: "البيع حسب المورد",
+        titleLink: "الشراء من المورد",
         path: "/",
         icon: <MdPayment size={"1.5rem"} className="me-4" />,
         query: "",
       },
       {
-        titleLink: "الطلبيات",
+        titleLink: "المشتريات",
         path: "/order",
         icon: <MdPayment size={"1.5rem"} className="me-4" />,
         query: "",
@@ -84,6 +84,12 @@ export const NavigationProjects: NavigationProjectProps[] = [
     query: "",
   },
   {
+    titleLink: "السائقين",
+    icon: <img src={customers} className="me-4 w-6" />,
+    path: "/drivers",
+    query: "",
+  },
+  {
     titleLink: "الزبائن",
     icon: <img src={customers} className="me-4 w-6" />,
     path: "/customers",
@@ -94,6 +100,12 @@ export const NavigationProjects: NavigationProjectProps[] = [
     path: "/cars",
     icon: <SettingsIcons />,
     list: [
+      {
+        titleLink: " السيارات",
+        path: "/car",
+        icon: <MdPayment size={"1.5rem"} className="me-4" />,
+        query: "",
+      },
       {
         titleLink: "موديلات السيارات",
         path: "/car-model",
@@ -118,18 +130,18 @@ export const NavigationProjects: NavigationProjectProps[] = [
         icon: <MdPayment size={"1.5rem"} className="me-4" />,
         query: "",
       },
+      {
+        titleLink: "الوان السيارات",
+        path: "/car-color",
+        icon: <MdPayment size={"1.5rem"} className="me-4" />,
+        query: "",
+      },
     ],
   },
   {
     titleLink: "أنواع الموظفين",
     icon: <img src={customers} className="me-4 w-6" />,
     path: "/employee-type",
-    query: "",
-  },
-  {
-    titleLink: "طرق الدفع",
-    icon: <img src={customers} className="me-4 w-6" />,
-    path: "/pay-types",
     query: "",
   },
   {

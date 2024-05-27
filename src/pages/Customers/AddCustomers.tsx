@@ -162,7 +162,7 @@ const AddCustomers: FC<{
                   setValue={form.setValue}
                   control={form.control}
                   name="image"
-                  label="اضافة صورة للصنف"
+                  label="اضافة صورة "
                   watch={form.watch}
                 />
               )}

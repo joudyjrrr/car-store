@@ -35,12 +35,12 @@ const ShowProduct = () => {
       <div className="flex gap-8 items-start ">
         <div className="flex flex-col gap-4 w-full ">
           <div className="grid grid-cols-3 gap-2">
-            {data?.product?.images.map((g: any) => (
-              <img
-                className="w-40  h-40  rounded-lg"
-                src={`${BASE_URL_IMG}/${g.id}/${g.file_name}`}
-              />
-            ))}
+              {data?.product?.images.map((g: any) => (
+                <img
+                  className="w-40  h-40  rounded-lg"
+                  src={`${BASE_URL_IMG}/${g.id}/${g.file_name}`}
+                />
+              ))}
           </div>
           <div className="bg-white p-4 rounded-lg flex justify-between shadow items-center">
             <p>Status</p>

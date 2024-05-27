@@ -4,8 +4,19 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import ContainerSellItem from "./ContainerSellItem";
 import ModalDetails from "./ModalDetails";
+import { useParams } from "react-router-dom";
 
 const Sells = () => {
+  const {id} = useParams()
+  const { data : SellItemById } = useQuery({
+    queryKey: ["get-SellItem" , id],
+    queryFn: async () => {
+      const { data } = await axios.get(`/getSellItem/${id}`);
+      return data.data;
+    },
+    enabled:!!id
+  });
+  console.log(SellItemById)
   const { data, isFetching } = useQuery({
     queryKey: ["get-prod"],
     queryFn: async () => {
@@ -26,7 +37,7 @@ const Sells = () => {
 
     setTotalPrice(totalPrice);
   };
-
+ 
   return (
     <PageContainer breadcrumb={[{ title: "المبيعات" }]}>
       <div className="w-full flex gap-4 items-start max-[560px]:flex-col">

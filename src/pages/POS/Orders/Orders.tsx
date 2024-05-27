@@ -1,6 +1,7 @@
 import { PageContainer } from "@/components/containers";
 import { Table } from "@/components/ui/Layout";
 import axios from "@/lib/axios";
+import path from "../../../assets/svgs/Path.svg";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { TableColumn } from "react-data-table-component";
@@ -12,6 +13,11 @@ import NotAcceptedTable from "./NotAcceptedTable";
 import { useNavigate } from "react-router-dom";
 import { FiEdit } from "react-icons/fi";
 import Map from "../Maps";
+import { Form } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import RHFTextField from "@/components/hook-form/RHFTextField";
+import { IoIosSearch } from "react-icons/io";
+import { FaArrowRotateRight } from "react-icons/fa6";
 
 const Orders = () => {
   const { data, isFetching, refetch } = useQuery({
@@ -21,7 +27,7 @@ const Orders = () => {
       return data.data;
     },
   });
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const cols: TableColumn<any>[] = [
     {
       id: "name",
@@ -82,33 +88,46 @@ const Orders = () => {
       ),
     },
   ];
+  const form = useForm();
   return (
     <PageContainer
       breadcrumb={[{ title: "الطلبيات حسب المورد" }]}
       className="overflow-x-hidden"
     >
-      <Tabs defaultValue="All" dir="rtl">
-        <TabsList className="flex justify-start mb-8">
-          <TabsTrigger value="All">الكل</TabsTrigger>
-          <TabsTrigger value="accept">المقبول</TabsTrigger>
-          <TabsTrigger value="notAcc">المرفوض</TabsTrigger>
-        </TabsList>
-        <TabsContent value="All">
-          <Table
-            table={{
-              columns: cols,
-              data: data?.data ?? [],
-              loading: isFetching,
-            }}
+      <Form {...form}>
+        <div className="bg-white my-8  max-md:flex-col max-md:w-fit cursor-pointer text-center   border border-gray-200 rounded-3xl flex justify-center items-center">
+          <img
+            src={path}
+            className="w-14  h-14 border-e border-gray-200 p-4 max-md:hidden"
           />
-        </TabsContent>
-        <TabsContent value="accept">
-          <AcceptOrderTable />
-        </TabsContent>
-        <TabsContent value="notAcc">
-          <NotAcceptedTable />
-        </TabsContent>
-      </Tabs>
+          <p className="border-e w-full flex justify-center border-gray-200 p-4 ">
+            فلترة حسب
+          </p>
+
+          <div className="border-e w-full border-gray-200  flex justify-between  items-center">
+            <RHFTextField
+              control={form.control}
+              startAdornment={
+                <IoIosSearch className="text-gray-600 text-2xl" />
+              }
+              name="name"
+              placeholder="البحث"
+              inputClassName="!border-none"
+            />
+          </div>
+          <p className=" p-4 w-full flex gap-4  items-center text-[#EA0234]">
+            <FaArrowRotateRight size={14} color="#EA0234" />
+            اعادة تهيئة الفلتر
+          </p>
+        </div>
+      </Form>
+      <Table
+        table={{
+          columns: cols,
+          data: data?.data ?? [],
+          loading: isFetching,
+        }}
+      />
       {/* <Map/> */}
     </PageContainer>
   );

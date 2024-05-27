@@ -22,11 +22,34 @@ import { DeleteModal } from "@/components/dialog";
 
 const Products = () => {
   const form = useForm();
+  const { data: ProductCategory } = useQuery({
+    queryKey: ["get-prod-cat"],
+    queryFn: async () => {
+      const { data } = await axios.get(`/getProductCategory`);
+      return data.data;
+    },
+  });
+  const { data: Brand } = useQuery({
+    queryKey: ["get-Brand"],
+    queryFn: async () => {
+      const { data } = await axios.get(`/getBrand`);
+      return data.data;
+    },
+  });
+  const Category = form.watch("product_category_id");
+  const Brand_id = form.watch("brand_id");
+  const Name = form.watch("name");
   const navigate = useNavigate();
   const { data, isFetching, error, refetch } = useQuery({
-    queryKey: ["get-prod"],
+    queryKey: ["get-prod", Name, Category, Brand_id],
     queryFn: async () => {
-      const { data } = await axios.get(`/getProduct`);
+      const { data } = await axios.get(`/getProduct`, {
+        params: {
+          name: Name,
+          page: Brand_id,
+          product_category_id: Category,
+        },
+      });
       return data.data;
     },
   });
@@ -39,7 +62,8 @@ const Products = () => {
       cell: (row) => (
         <img
           className="w-[60px] h-[60px] my-6"
-          src={`${BASE_URL_IMG}/${row.images?.[0]?.id!}/${row.images?.[0]?.file_name!}`}
+          src={`${BASE_URL_IMG}/${row.images?.[0]?.id!}/${row.images?.[0]
+            ?.file_name!}`}
         />
       ),
     },
@@ -120,9 +144,9 @@ const Products = () => {
                   الصنف
                 </p>
               }
-              name="category"
+              name="product_category_id"
               watch={form.watch}
-              options={[{ id: "0", name: "t" }]}
+              options={ProductCategory}
               control={form.control}
               classNameValue="!border-none   items-center gap-4 "
             />
@@ -131,12 +155,12 @@ const Products = () => {
             <SelectFiled
               Trigger={
                 <p className=" flex justify-between text-black    items-center">
-                  فلترة حسب الماركة
+                  الماركة
                 </p>
               }
-              name="category"
+              name="brand_id"
               watch={form.watch}
-              options={[{ id: "0", name: "t" }]}
+              options={Brand}
               control={form.control}
               classNameValue="!border-none   items-center gap-4 "
             />

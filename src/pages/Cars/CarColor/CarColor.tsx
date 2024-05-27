@@ -6,41 +6,31 @@ import { ModalStates } from "@/types";
 import React, { useState } from "react";
 import { TableColumn } from "react-data-table-component";
 import { FiEdit } from "react-icons/fi";
-import AddCarHorsepower from "./AddCarHorsepower";
 import { useQuery } from "@tanstack/react-query";
 import axios from "@/lib/axios";
 import moment from "moment";
-const CarHorsepower = () => {
+import AddCarColor from "./AddCarColor";
+const CarModel = () => {
   const [selectedRow, setSelectedRow] = useState();
   const [modalState, setModalState] = useState<ModalStates>(null);
   const { data, isFetching, error, refetch } = useQuery({
-    queryKey: ["get-Horsepower"],
+    queryKey: ["get-car-color"],
     queryFn: async () => {
-      const { data } = await axios.get(`/getCarMotor`);
+      const { data } = await axios.get(`/getCarColor`);
       return data.data;
     },
   });
   const cols: TableColumn<any>[] = [
     {
       id: "currency",
-      name: "الاسم",
+      name: "القيمة",
       cell: (row) => <div title={row.value}>{row.name}</div>,
-    },
-    {
-      id: "currency",
-      name: "الوقود",
-      cell: (row) => <div title={row.value}>{row.fuel}</div>,
-    },
-    {
-      id: "currency",
-      name: "gear",
-      cell: (row) => <div title={row.value}>{row.gear}</div>,
     },
 
     {
       id: "created_at",
       name: "تاريخ الانشاء",
-      cell: (row) => <div>{moment(row.created_at).format("YYYY/MM/DD")}</div>,
+      cell: (row) =>   <div>{moment(row.created_at).format("YYYY/MM/DD")}</div>,
     },
 
     {
@@ -60,7 +50,7 @@ const CarHorsepower = () => {
 
           <DeleteModal
             MassegeSuccess="تم الحذف بنجاح"
-            apiPath={`/deleteCarMotor/${row.id}`}
+            apiPath={`/deleteCarColor/${row.id}`}
             refetch={refetch}
           />
         </div>
@@ -68,7 +58,7 @@ const CarHorsepower = () => {
     },
   ];
   return (
-    <PageContainer breadcrumb={[{ title: "سعة المحرك" }]}>
+    <PageContainer breadcrumb={[{ title: "الوان السيارات" }]}>
       <div className="flex justify-end w-full my-4">
         <Button onClick={() => setModalState("add")}>أضافة</Button>
       </div>
@@ -76,11 +66,11 @@ const CarHorsepower = () => {
         table={{
           columns: cols,
           data: data,
-          loading:isFetching,
+          loading: isFetching,
         }}
       />
       {(modalState === "add" || modalState === "edit") && (
-        <AddCarHorsepower
+        <AddCarColor
           isOpen={modalState === "add" || modalState === "edit"}
           onClose={() => setModalState(null)}
           formValues={modalState === "edit" ? selectedRow : undefined}
@@ -90,4 +80,4 @@ const CarHorsepower = () => {
   );
 };
 
-export default CarHorsepower;
+export default CarModel;

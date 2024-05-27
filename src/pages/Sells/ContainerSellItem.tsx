@@ -138,11 +138,24 @@ const ContainerSellItem: FC<{
 
   const methods = useForm();
   const navigate = useNavigate();
+  const { data : Drivers} = useQuery({
+    queryKey: ["get-Driver"],
+    queryFn: async () => {
+      const { data } = await axios.get(`/getDriver`);
+      return data.data;
+    },
+    select: (data) =>
+    data?.map((data: any) => ({
+        id: data.id,
+        name: data.user.name,
+    })),
+  });
+  // console.log(Drivers)
   const { handleSubmit, watch, reset, setValue } = methods;
   const Submit = (data: any) => {
     // console.log(data, selectedProducts);
 
-    const buy_info = selectedProducts.map((item: any) => {
+    const sell_info = selectedProducts.map((item: any) => {
       return {
         product_id: item.id,
         quantity: item.quantity,
@@ -153,7 +166,7 @@ const ContainerSellItem: FC<{
     const body = {
       ...data,
       status: "waiting",
-      buy_info,
+      sell_info,
 
       total_price: totalPrice,
     };
@@ -163,7 +176,7 @@ const ContainerSellItem: FC<{
     mutate(body, {
       onSuccess() {
         toast("تمت عملية الشراء بنجاح");
-        // navigate("/pos/order");
+        navigate("/order");
       },
     });
   };
@@ -224,7 +237,7 @@ const ContainerSellItem: FC<{
               <>
                 <RHFSelect
                   name="driver_id"
-                  options={Customer}
+                  options={Drivers}
                   label="اختر سائق"
                   control={methods.control}
                   watch={methods.watch}

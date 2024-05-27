@@ -7,13 +7,16 @@ import RHFTextField from "@/components/hook-form/RHFTextField";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import axios, { BASE_URL_IMG } from "@/lib/axios";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import image from "../../assets/Login.jpg";
 import MultiSelectField from "@/components/hook-form/MultiSelectField";
+import { watch } from "fs";
+import { DeleteModal } from "@/components/dialog";
+import DataTable, { TableColumn } from "react-data-table-component";
 
 const AddProducts = () => {
   const { id } = useParams();
@@ -26,43 +29,118 @@ const AddProducts = () => {
       return data.data;
     },
   });
-  console.log(cars);
+
   const carYearOptions = cars
     ? cars.map((car: any) => ({
-        value: car.id,
-        label: car.car_year?.name,
+        id: car.car_year.id,
+        name: car.car_year?.name,
       }))
     : [];
   const car_company_name = cars
     ? cars.map((car: any) => ({
-        value: car.id,
-        label: car.car_company?.name,
+        id: car.car_company.id,
+        name: car.car_company?.name,
       }))
     : [];
   const car_motor_name = cars
     ? cars.map((car: any) => ({
-        value: car.id,
-        label: car.car_motor?.name,
+        id: car.car_motor.id,
+        name: car.car_motor?.name,
+      }))
+    : [];
+  const car_horsepower = cars
+    ? cars.map((car: any) => ({
+        id: car.car_horsepower.id,
+        name: car.car_horsepower?.name,
       }))
     : [];
   const car_model_name = cars
     ? cars.map((car: any) => ({
-        value: car.id,
-        label: car.car_model?.name,
+        id: car.car_model.id,
+        name: car.car_model?.name,
       }))
     : [];
-  console.log(carYearOptions);
+  const color = cars
+    ? cars.map((car: any) => ({
+        id: car.color.id,
+        name: car.color?.name,
+      }))
+    : [];
+  const cols: TableColumn<any>[] = [
+    {
+      id: "currency",
+      name: "سنة الصنع",
+      cell: (row) => <div title={row.value}>{row.car_year?.name}</div>,
+    },
+    {
+      id: "currency",
+      name: "قوة الحصان",
+      cell: (row) => <div title={row.value}>{row.car_horsepower?.name}</div>,
+    },
+    {
+      id: "currency",
+      name: "شركة السيارة",
+      cell: (row) => <div title={row.value}>{row.car_company?.name}</div>,
+    },
+    {
+      id: "currency",
+      name: "موديل السيارة",
+      cell: (row) => <div title={row.value}>{row.car_model?.name}</div>,
+    },
+    {
+      id: "currency",
+      name: "قوة المحرك",
+      cell: (row) => <div title={row.value}>{row.car_motor?.name}</div>,
+    },
+
+    {
+      id: "currency",
+      name: "لون السيارة",
+      cell: (row) => <div title={row.value}>{row.color?.name}</div>,
+    },
+
+    {
+      id: "actions",
+      name: "التحكم",
+      cell: (row) => (
+        <div className="flex justify-center  items-center text-center cursor-pointer">
+          <DeleteModal
+            MassegeSuccess="تم الحذف بنجاح"
+            apiPath={`/deleteCarYear/${row.id}`}
+            refetch={refetch}
+          />
+        </div>
+      ),
+    },
+  ];
+
   const { data, isFetching, error, refetch } = useQuery({
     queryKey: ["get-prod", id],
     queryFn: async () => {
       const { data } = await axios.get(`/getProductById/${id}`);
       return data.data;
     },
+    enabled: !!id,
   });
-
+  const { data: brandOptions } = useQuery({
+    queryKey: ["get-Brand"],
+    queryFn: async () => {
+      const { data } = await axios.get(`/getBrand`);
+      return data.data;
+    },
+  });
+  const { data: categoryOptions } = useQuery({
+    queryKey: ["get-prod-cat"],
+    queryFn: async () => {
+      const { data } = await axios.get(`/getProductCategory`);
+      return data.data;
+    },
+  });
   useEffect(() => {
     if (data) {
+      console.log(data?.product?.quantity);
       form.setValue("name", data?.product?.name);
+      form.setValue("current_count", data?.product?.quantity);
       form.setValue("price", data?.product?.price);
       form.setValue("price_discount", data?.product?.price_discount);
       form.setValue("cost", data?.product?.cost);
@@ -79,16 +157,29 @@ const AddProducts = () => {
         ) || []
       );
     }
-  }, [data, form]);
+  }, [data, brandOptions, categoryOptions]);
 
-  console.log(data?.product!);
+  const [selectedRows, setSelectedRows] = useState([]);
+
+  const handleSelectedRowsChange = (rows) => {
+    const selectedCarIds = rows.selectedRows.map((row) => row.id);
+    setSelectedRows(selectedCarIds);
+  };
+  // console.log(data?.product!);
   const { mutate, isPending } = useMutation({
     mutationFn: async (data) => {
       const res = await axios.post(`/createProduct`, data, {
         headers: {
           "Content-Type": "multipart/formData",
+          Accept: "application/json",
         },
       });
+      return res;
+    },
+  });
+  const { mutate: CreateCar } = useMutation({
+    mutationFn: async (data) => {
+      const res = await axios.post(`/createCar`, data);
       return res;
     },
   });
@@ -102,25 +193,12 @@ const AddProducts = () => {
       return res;
     },
   });
-  console.log(gallery);
-  const { data: categoryOptions } = useQuery({
-    queryKey: ["get-prod-cat"],
-    queryFn: async () => {
-      const { data } = await axios.get(`/getProductCategory`);
-      return data.data;
-    },
-  });
-  const { data: brandOptions } = useQuery({
-    queryKey: ["get-Brand"],
-    queryFn: async () => {
-      const { data } = await axios.get(`/getBrand`);
-      return data.data;
-    },
-  });
+  // console.log(gallery);
+
   const navigate = useNavigate();
   const submitHandler = (data: any) => {
     const formData = new FormData() as any;
-    formData.append("car_id", data.car_id);
+
     data.name && formData.append("name", data.name);
     data.product_category_id &&
       formData.append("product_category_id", data.product_category_id);
@@ -134,8 +212,18 @@ const AddProducts = () => {
     data.is_active && formData.append("is_active", data.is_active);
     data.evaluation && formData.append("evaluation", data.evaluation);
     data.brand_id && formData.append("brand_id", data.brand_id);
+    console.log(selectedRows);
+
+    if (selectedRows) {
+      for (let i = 0; i < selectedRows?.length; i++) {
+        formData.append(`car_id[${i}]`, selectedRows[i]);
+      }
+    }
+
     for (let i = 0; i < gallery?.length; i++) {
-      formData.append(`image${i + 1}`, gallery[i]);
+      if (gallery[i] instanceof File) {
+        formData.append(`image${i + 1}`, gallery[i]);
+      }
     }
     console.log(formData);
     if (id) {
@@ -162,6 +250,36 @@ const AddProducts = () => {
       });
     }
   };
+  const queryClient = useQueryClient();
+  const form2 = useForm();
+  const addCar = () => {
+    const body: any = {
+      car_company_id: form.watch("car_company_id"),
+      car_model_id: form.watch("car_model_id"),
+      car_horsepower_id: form.watch("car_horsepower_id"),
+      car_year_id: form.watch("car_year_id"),
+      car_motor_id: form.watch("car_motor_id"),
+      color_id: form.watch("color_id"),
+    };
+    CreateCar(body, {
+      onSuccess() {
+        toast("تمت الاضافة السيارة");
+        queryClient.refetchQueries({ queryKey: ["get-cars"] });
+        form.reset({
+          car_company_id: "",
+          car_model_id: "",
+          car_horsepower_id: "",
+          color_id: "",
+          car_year_id: "",
+          car_motor_id: "",
+        });
+      },
+    });
+    // console.log(form.watch("car_id"));
+  };
+
+  // console.log(selectedRows)
+
   return (
     <PageContainer
       breadcrumb={[{ title: id ? "تعديل المنتج" : "اضافة منتج" }]}
@@ -257,7 +375,6 @@ const AddProducts = () => {
                 {gallery?.map((g: any) => (
                   <img
                     width={40}
-                    crossOrigin="anonymous"
                     height={40}
                     className="w-full h-full  rounded-xl object-cover"
                     alt=""
@@ -274,42 +391,71 @@ const AddProducts = () => {
             placeholder="وصف المنتج هنا"
             label="الوصف"
           />
-          <div className="bg-white px-6 my-6 py-2 flex flex-col gap-4 shadow rounded-lg">
+          <div
+            onSubmit={form2.handleSubmit(addCar)}
+            className="bg-white px-6 my-6 py-2 flex flex-col gap-4 shadow rounded-lg"
+          >
             <div className="flex max-md:flex-col gap-4 w-full justify-center">
-              <MultiSelectField
+              <SelectFiled
                 control={form.control}
                 label="سنة الصنع"
-                name="car_id"
+                name="car_year_id"
                 watch={form.watch}
                 options={carYearOptions}
                 placeholder="سنة الصنع"
               />
-              <MultiSelectField
+              <SelectFiled
                 label="حجم المحرك"
                 placeholder="حجم المحرك"
-                name="car_id"
+                name="car_motor_id"
                 watch={form.watch}
                 options={car_motor_name}
                 control={form.control}
               />
-              <MultiSelectField
+              <SelectFiled
                 label="موديل السيارة"
                 placeholder="موديل السيارة"
-                name="car_id"
+                name="car_model_id"
                 watch={form.watch}
                 options={car_model_name}
                 control={form.control}
               />
-              <MultiSelectField
+              <SelectFiled
                 label="شركة السيارة"
                 placeholder="شركة السيارة"
-                name="car_id"
+                name="car_company_id"
                 watch={form.watch}
                 options={car_company_name}
                 control={form.control}
               />
+              <SelectFiled
+                label="لون السيارة"
+                placeholder="لون السيارة"
+                name="color_id"
+                watch={form.watch}
+                options={color}
+                control={form.control}
+              />
+              <SelectFiled
+                label="قوة الحصان"
+                placeholder="قوة الحصان"
+                name="car_horsepower_id"
+                watch={form.watch}
+                options={car_horsepower}
+                control={form.control}
+              />
             </div>
+            <Button className="w-fit" onClick={() => addCar()} type="button">
+              {" "}
+              اضافة سيارة
+            </Button>
           </div>
+          <DataTable
+            columns={cols}
+            data={cars}
+            selectableRows
+            onSelectedRowsChange={handleSelectedRowsChange}
+          />
           <div className="flex gap-2 my-6 justify-center w-full">
             <Button className="w-full">{id ? "تعديل" : "اضافة"}</Button>
             <Button className="w-full" variant={`cancel`}>

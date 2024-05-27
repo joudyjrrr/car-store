@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 
 import { BiSolidTrashAlt } from "react-icons/bi";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Dialog, DialogContent } from "../../../components/ui/dialog";
 import { Button } from "../../../components/ui/button";
@@ -13,6 +13,7 @@ const AcceptOrder: FC<{
   className?: string;
   key?: string;
 }> = ({ id, refetch }) => {
+  const queryClient = useQueryClient()
   const [openModal, setOpenModal] = useState(false);
   const mutation = useMutation({
     mutationFn: async () => {
@@ -23,6 +24,7 @@ const AcceptOrder: FC<{
       toast("تم قبول الطلبية");
       setOpenModal(false);
       refetch?.();
+      queryClient.refetchQueries({ queryKey: ["get-Buy"] });
     },
     onError: (errorMessage: any) => {
       toast.error(errorMessage);

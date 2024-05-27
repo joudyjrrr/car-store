@@ -6,15 +6,15 @@ const Status: FC<{
   return (
     <span
       className={`text-sm rounded-xl px-6 max-xl:p-[4px] max-md:text-xs py-2   text-white ${
-        variant === "Completed"
+        variant === "completed"
           ? "bg-[#00B69B]/60 ]"
           : variant === "Processing"
           ? "bg-[#6226EF]/60 "
-          : variant === "Rejected"
+          : variant === "rejected"
           ? "bg-[#EF3826]/60 "
-          : variant === "On Hold"
-          ? "bg-[#FFA756]/60 "
-          : variant === "In Transit" && "bg-[#BA29FF]/60"
+          : variant === "waiting"
+          && "bg-[#FFA756]/60 "
+          
       }`}
     >
       {variant}
