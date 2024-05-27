@@ -148,7 +148,7 @@ const ContainerSellItem: FC<{
   const navigate = useNavigate()
 
   const Submit = (data: any) => {
-    const buy_info = selectedProducts.map((item) => {
+    const buy_info = selectedProducts.map((item : any) => {
       return {
         product_id: item.id,
         quantity: item.quantity,

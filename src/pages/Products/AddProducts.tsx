@@ -161,8 +161,8 @@ const AddProducts = () => {
 
   const [selectedRows, setSelectedRows] = useState([]);
 
-  const handleSelectedRowsChange = (rows) => {
-    const selectedCarIds = rows.selectedRows.map((row) => row.id);
+  const handleSelectedRowsChange = (rows : any) => {
+    const selectedCarIds = rows.selectedRows.map((row : any) => row.id);
     setSelectedRows(selectedCarIds);
   };
   // console.log(data?.product!);

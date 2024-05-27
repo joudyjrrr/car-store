@@ -47,20 +47,20 @@ const SellItem = () => {
     selectedProducts[0] ? selectedProducts[0].cost : 0
   );
 
-  const calculateTotalCost = (products) => {
-    const total = products.reduce((acc, curr) => acc + curr.cost, 0);
+  const calculateTotalCost = (products : any) => {
+    const total = products.reduce((acc : any, curr : any) => acc + curr.cost, 0);
     setTotalCost(total);
   };
 
   const calculateTotalPrice = (products: any) => {
-    const totalPrice = products.reduce((sum, product) => {
+    const totalPrice = products.reduce((sum : any, product : any) => {
       return sum + product.price * product.quantity;
     }, 0);
 
     setTotalPrice(totalPrice);
   };
-  const handleQuantityChange = (Product, action: string) => {
-    const updatedProducts = selectedProducts?.map((p) => {
+  const handleQuantityChange = (Product : any, action: string) => {
+    const updatedProducts = selectedProducts?.map((p : any) => {
       if (p.id === Product.id) {
         if (action === "increase") {
           return { ...p, quantity: p.quantity + 1 };
@@ -88,9 +88,9 @@ const SellItem = () => {
     calculateTotalPrice(updatedProducts);
     calculateTotalCost(updatedProducts);
   };
-  const handleProductSelect = (Product) => {
+  const handleProductSelect = (Product : any) => {
     if (selectedProducts.includes(Product)) {
-      setSelectedProducts(selectedProducts.filter((p) => p !== Product));
+      setSelectedProducts(selectedProducts.filter((p : any) => p !== Product));
     } else {
       addNewProduct(Product);
     }
@@ -111,8 +111,8 @@ const SellItem = () => {
       return res;
     },
   });
-  const handlePriceChange = (Product, newPrice) => {
-    const updatedProducts = selectedProducts?.map((p) => {
+  const handlePriceChange = (Product : any, newPrice : any) => {
+    const updatedProducts = selectedProducts?.map((p : any) => {
       if (p.id === Product.id) {
         return { ...p, price: newPrice };
       }
@@ -122,8 +122,8 @@ const SellItem = () => {
     calculateTotalPrice(updatedProducts);
   };
 
-  const handleCostChange = (Product, newCost) => {
-    const updatedProducts = selectedProducts?.map((p) => {
+  const handleCostChange = (Product : any, newCost : any) => {
+    const updatedProducts = selectedProducts?.map((p : any) => {
       if (p.id === Product.id) {
         return { ...p, cost: newCost };
       }
@@ -239,7 +239,7 @@ const queryClient = useQueryClient()
   const methods = useForm();
   const navigate = useNavigate();
   const Submit = (data: any) => {
-    const buy_info = selectedProducts.map((item) => {
+    const buy_info = selectedProducts.map((item : any) => {
       return {
         product_id: item.id,
         quantity: item.quantity,

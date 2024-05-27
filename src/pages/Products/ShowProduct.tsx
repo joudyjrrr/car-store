@@ -75,13 +75,13 @@ const ShowProduct = () => {
 
               <p>
                 الماركة:{" "}
-                {Brands?.find((d) => d.id === data?.product?.brand_id)?.name}
+                {Brands?.find((d : any) => d.id === data?.product?.brand_id)?.name}
               </p>
               <p>
                 الصنف:{" "}
                 {
                   Category?.find(
-                    (d) => d.id === data?.product?.product_category_id
+                    (d : any) => d.id === data?.product?.product_category_id
                   )?.name
                 }
               </p>

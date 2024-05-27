@@ -37,17 +37,17 @@ const Map = () => {
           destination: driverLocation,
           travelMode: window.google.maps.TravelMode.DRIVING,
         },
-        (result, status) => {
+        (result : any, status) => {
           if (status === window.google.maps.DirectionsStatus.OK) {
-            setDirections(result);
+            setDirections(result );
           }
         }
       );
     }
   }, [customerLocation, driverLocation]);
 
-  const onClick = (event) => {
-    const newLocation = {
+  const onClick = (event : any) => {
+    const newLocation : any = {
       lat: event.latLng.lat(),
       lng: event.latLng.lng(),
     };

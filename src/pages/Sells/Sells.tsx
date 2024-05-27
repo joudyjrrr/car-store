@@ -31,7 +31,7 @@ const Sells = () => {
     selectedProducts[0] ? selectedProducts[0].price : 0
   );
   const calculateTotalPrice = (products: any) => {
-    const totalPrice = products.reduce((sum, product) => {
+    const totalPrice = products.reduce((sum : any, product : any) => {
       return sum + product.price * product.quantity;
     }, 0);
 

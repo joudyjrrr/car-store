@@ -24,9 +24,9 @@ const MultiSelectField: FC<MultiSelectFieldProps> = ({
 }) => {
   const selectedValues = watch ? watch(name) : undefined;
 
-  const handleChange = (selectedOptions: any[]) => {
+  const handleChange = (selectedOptions: any) => {
     if (onSelectChange) {
-      const selectedIds = selectedOptions.map((option) => option.value);
+      const selectedIds = selectedOptions.map((option : any) => option.value);
       onSelectChange(selectedIds);
     }
   };
