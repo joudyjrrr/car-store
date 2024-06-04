@@ -17,7 +17,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "@/lib/axios";
 import { Form } from "@/components/ui/form";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { CustmersSelect, PayTypeSelect } from "@/api/ApiQuery";
 import SelectLocation from "./SelectLocation";
 import SelectCustomer from "./SelectCustmers";
@@ -38,13 +38,28 @@ const ContainerSellItem: FC<{
   setTotalPrice,
   calculateTotalPrice,
 }) => {
+  const { id } = useParams();
+  const { data: SellItemById } = useQuery({
+    queryKey: ["get-SellItem", id],
+    queryFn: async () => {
+      const { data } = await axios.get(`/getSellItemById/${id}`);
+      return data.data;
+    },
+    enabled: !!id,
+  });
+
   const { mutate, isPending } = useMutation({
     mutationFn: async (data) => {
       const res = await axios.post(`/createSellItem`, data);
       return res;
     },
   });
-
+  const { mutate: updateSellItem } = useMutation({
+    mutationFn: async (data) => {
+      const res = await axios.post(`/update/${id}`, data);
+      return res;
+    },
+  });
   //  console.log(totalPrice)
   const handleQuantityChange = (product: any, action: any) => {
     const updatedProducts = [...selectedProducts];
@@ -138,28 +153,29 @@ const ContainerSellItem: FC<{
 
   const methods = useForm();
   const navigate = useNavigate();
-  const { data : Drivers} = useQuery({
+  const { data: Drivers } = useQuery({
     queryKey: ["get-Driver"],
     queryFn: async () => {
       const { data } = await axios.get(`/getDriver`);
       return data.data;
     },
     select: (data) =>
-    data?.map((data: any) => ({
+      data?.map((data: any) => ({
         id: data.id,
         name: data.user.name,
-    })),
+      })),
   });
   // console.log(Drivers)
   const { handleSubmit, watch, reset, setValue } = methods;
   const Submit = (data: any) => {
-    // console.log(data, selectedProducts);
-
+    // console.log(selectedProducts);
+    console.log(selectedProducts);
     const sell_info = selectedProducts.map((item: any) => {
       return {
         product_id: item.id,
         quantity: item.quantity,
         price: item.price,
+        id: item.sell_item_id,
       };
     });
 
@@ -171,16 +187,53 @@ const ContainerSellItem: FC<{
       total_price: totalPrice,
     };
     delete body.order_typr;
-    console.log(body);
-    console.log(body);
-    mutate(body, {
-      onSuccess() {
-        toast("تمت عملية الشراء بنجاح");
-        navigate("/order");
-      },
-    });
+    if (id) {
+      updateSellItem(body, {
+        onSuccess() {
+          toast("تمت عملية التعديل بنجاح");
+          // navigate("/order");
+        },
+      });
+    } else {
+      mutate(body, {
+        onSuccess() {
+          toast("تمت عملية الشراء بنجاح");
+          navigate("/order");
+        },
+      });
+    }
   };
-  const [customerName,setCustomerName] = useState()
+  const [customerName, setCustomerName] = useState();
+  // console.log(SellItemById);
+  const { data: Prod } = useQuery({
+    queryKey: ["get-prod"],
+    queryFn: async () => {
+      const { data } = await axios.get(`/getProduct`);
+      return data.data;
+    },
+  });
+  useEffect(() => {
+    if (SellItemById) {
+      methods.reset({
+        customer_id: SellItemById?.customer_id,
+        barcode: SellItemById?.barcode,
+      });
+      const updatedProducts = SellItemById?.sell_item_infos?.map((item : any) => {
+        return {
+          ...item,
+          id: item.product_id,
+          name: item?.product?.name,
+          sell_item_id: item.id,
+        };
+      });
+      console.log(updatedProducts);
+      setSelectedProducts(updatedProducts);
+      setCustomerName(
+        Customer?.find((d: any) => d.id === SellItemById?.customer_id).name
+      );
+      setTotalPrice(SellItemById?.total_price);
+    }
+  }, [SellItemById, Customer]);
   return (
     <div className="p-4 bg-white rounded-xl w-[450px] max-sm:w-full h-fit transition-all drop-shadow-lg flex flex-col gap-4">
       <Form {...methods}>
@@ -306,7 +359,7 @@ const ContainerSellItem: FC<{
         setValue={methods.setValue}
       />
       <SelectCustomer
-      setCustomerName={setCustomerName}
+        setCustomerName={setCustomerName}
         customers={Customer}
         open={openCustmers}
         setOpen={() => setopenCustmers(false)}

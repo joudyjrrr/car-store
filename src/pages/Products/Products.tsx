@@ -79,21 +79,24 @@ const Products = () => {
     },
     {
       id: "name",
-      name: "Price",
+      name: "سعر البيع",
       cell: (row) => <div className="text-sm">{row.price}</div>,
+    },
+    {
+      id: "name",
+      name: "سعر الشراء",
+      cell: (row) => <div className="text-sm">{row.cost}</div>,
+    },
+    {
+      id: "name",
+      name: "الكمية",
+      cell: (row) => <div className="text-sm">{row.quantity}</div>,
     },
     {
       id: "name",
       name: "التقييم",
       cell: (row) => (
         <div className="text-sm line-through">{row.evaluation}</div>
-      ),
-    },
-    {
-      id: "name",
-      name: "نشط",
-      cell: (row) => (
-        <div className="text-sm">{row.is_active == 0 ? "No" : "Yes"}</div>
       ),
     },
     {

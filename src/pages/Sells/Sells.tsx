@@ -7,16 +7,7 @@ import ModalDetails from "./ModalDetails";
 import { useParams } from "react-router-dom";
 
 const Sells = () => {
-  const {id} = useParams()
-  const { data : SellItemById } = useQuery({
-    queryKey: ["get-SellItem" , id],
-    queryFn: async () => {
-      const { data } = await axios.get(`/getSellItem/${id}`);
-      return data.data;
-    },
-    enabled:!!id
-  });
-  console.log(SellItemById)
+  
   const { data, isFetching } = useQuery({
     queryKey: ["get-prod"],
     queryFn: async () => {
@@ -28,7 +19,7 @@ const Sells = () => {
   const [selectedProducts, setSelectedProducts] = useState<any>([]);
   const [open, setOpen] = useState<boolean>();
   const [totalPrice, setTotalPrice] = useState(
-    selectedProducts[0] ? selectedProducts[0].price : 0
+    selectedProducts ? selectedProducts[0]?.price : 0
   );
   const calculateTotalPrice = (products: any) => {
     const totalPrice = products.reduce((sum : any, product : any) => {
@@ -54,7 +45,7 @@ const Sells = () => {
           {data?.data?.map((product: any, index: number) => (
             <div
               onClick={() => {
-                setSelectedProduc({ ...product, quantity: 1 });
+                setSelectedProduc({ ...product });
                 setOpen(true);
               }}
               key={index}

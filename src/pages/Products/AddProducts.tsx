@@ -17,80 +17,116 @@ import MultiSelectField from "@/components/hook-form/MultiSelectField";
 import { watch } from "fs";
 import { DeleteModal } from "@/components/dialog";
 import DataTable, { TableColumn } from "react-data-table-component";
+import { Label } from "@/components/ui/label";
 
 const AddProducts = () => {
   const { id } = useParams();
   const [gallery, setGallry] = useState<any>([]);
   const form = useForm();
+  const [filterValueCompany, setFilterValueCompany] = useState("");
+  const [filterValueColor, setFilterValueColor] = useState("");
+  const [filterValueMotor, setFilterValueMotor] = useState("");
+  const [filterValueModel, setFilterValueModel] = useState("");
+  const [filterValueYear, setFilterValueYear] = useState("");
+
+  const [filterValueName, setFilterValueName] = useState("");
+  const [filterValueEnd, setFilterValueEnd] = useState("");
+  const [filterValueStart, setFilterValueStart] = useState("");
+
+  // console.log(filterValueCompany);
   const { data: cars } = useQuery({
-    queryKey: ["get-cars", id],
+    queryKey: [
+      "get-cars",
+      id,
+      filterValueCompany,
+      filterValueColor,
+      filterValueModel,
+      filterValueYear,
+      filterValueMotor
+    ],
     queryFn: async () => {
-      const { data } = await axios.get(`/getCars`);
+      const { data } = await axios.get(`/getCar`, {
+        params: {
+          company_name: filterValueCompany,
+          color: filterValueColor,
+          motor: filterValueMotor,
+          model: filterValueModel,
+          year: filterValueYear,
+        },
+      });
+      return data.data?.data;
+    },
+  });
+  console.log(cars);
+  const { data: carYearOptions } = useQuery({
+    queryKey: ["get-CarYear", id],
+    queryFn: async () => {
+      const { data } = await axios.get(`/getCarYear`);
+      return data.data;
+    },
+  });
+  const { data: car_company_name } = useQuery({
+    queryKey: ["get-CarCompany", id],
+    queryFn: async () => {
+      const { data } = await axios.get(`/getCarCompany`);
+      return data.data;
+    },
+  });
+  const { data: car_motor_name } = useQuery({
+    queryKey: ["get-getCarMotor", id],
+    queryFn: async () => {
+      const { data } = await axios.get(`/getCarMotor`);
+      return data.data;
+    },
+  });
+  const { data: car_horsepower } = useQuery({
+    queryKey: ["get-CarHorsepower", id],
+    queryFn: async () => {
+      const { data } = await axios.get(`/getCarHorsepower`);
+      return data.data;
+    },
+  });
+  const { data: car_model_name } = useQuery({
+    queryKey: ["get-car_model_name"],
+    queryFn: async () => {
+      const { data } = await axios.get(`/getCarModel`);
       return data.data;
     },
   });
 
-  const carYearOptions = cars
-    ? cars.map((car: any) => ({
-        id: car.car_year.id,
-        name: car.car_year?.name,
-      }))
-    : [];
-  const car_company_name = cars
-    ? cars.map((car: any) => ({
-        id: car.car_company.id,
-        name: car.car_company?.name,
-      }))
-    : [];
-  const car_motor_name = cars
-    ? cars.map((car: any) => ({
-        id: car.car_motor.id,
-        name: car.car_motor?.name,
-      }))
-    : [];
-  const car_horsepower = cars
-    ? cars.map((car: any) => ({
-        id: car.car_horsepower.id,
-        name: car.car_horsepower?.name,
-      }))
-    : [];
-  const car_model_name = cars
-    ? cars.map((car: any) => ({
-        id: car.car_model.id,
-        name: car.car_model?.name,
-      }))
-    : [];
-  const color = cars
-    ? cars.map((car: any) => ({
-        id: car.color.id,
-        name: car.color?.name,
-      }))
-    : [];
+  const { data: color } = useQuery({
+    queryKey: ["get-getCarColor", id],
+    queryFn: async () => {
+      const { data } = await axios.get(`/getCarColor`);
+      return data.data;
+    },
+  });
+  // console.log(car_model_name)
+
   const cols: TableColumn<any>[] = [
     {
       id: "currency",
       name: "سنة الصنع",
-      cell: (row) => <div title={row.value}>{row.car_year?.name}</div>,
-    },
-    {
-      id: "currency",
-      name: "قوة الحصان",
-      cell: (row) => <div title={row.value}>{row.car_horsepower?.name}</div>,
+      cell: (row) => <div title={row.value}>{row.year?.name}</div>,
     },
     {
       id: "currency",
       name: "شركة السيارة",
-      cell: (row) => <div title={row.value}>{row.car_company?.name}</div>,
+      cell: (row) => <div title={row.value}>{row.company?.name}</div>,
     },
     {
       id: "currency",
       name: "موديل السيارة",
-      cell: (row) => <div title={row.value}>{row.car_model?.name}</div>,
+      cell: (row) => (
+        <div title={row.value}>
+          {car_model_name?.find((d : any) => d.id === row.model_id)?.name}
+        </div>
+      ),
     },
     {
       id: "currency",
       name: "قوة المحرك",
-      cell: (row) => <div title={row.value}>{row.car_motor?.name}</div>,
+      cell: (row) => <div title={row.value}>{row.motor?.name}</div>,
     },
 
     {
@@ -138,16 +174,13 @@ const AddProducts = () => {
   });
   useEffect(() => {
     if (data) {
-      console.log(data?.product?.quantity);
+      // console.log(data?.product?.quantity);
       form.setValue("name", data?.product?.name);
-      form.setValue("current_count", data?.product?.quantity);
+      form.setValue("quantity", data?.product?.quantity);
       form.setValue("price", data?.product?.price);
-      form.setValue("price_discount", data?.product?.price_discount);
       form.setValue("cost", data?.product?.cost);
-      form.setValue("current_count", data?.product?.current_count);
       form.setValue("barcode", data?.product?.barcode);
       form.setValue("is_active", data?.product?.is_active);
-      form.setValue("evaluation", data?.product?.evaluation);
       form.setValue("brand_id", data?.product?.brand_id);
       form.setValue("product_category_id", data?.product?.product_category_id);
       form.setValue("description", data?.product?.description);
@@ -161,11 +194,11 @@ const AddProducts = () => {
 
   const [selectedRows, setSelectedRows] = useState([]);
 
-  const handleSelectedRowsChange = (rows : any) => {
-    const selectedCarIds = rows.selectedRows.map((row : any) => row.id);
+  const handleSelectedRowsChange = (rows: any) => {
+    const selectedCarIds = rows.selectedRows.map((row: any) => row.id);
     setSelectedRows(selectedCarIds);
   };
-  // console.log(data?.product!);
+
   const { mutate, isPending } = useMutation({
     mutationFn: async (data) => {
       const res = await axios.post(`/createProduct`, data, {
@@ -193,26 +226,20 @@ const AddProducts = () => {
       return res;
     },
   });
-  // console.log(gallery);
 
   const navigate = useNavigate();
   const submitHandler = (data: any) => {
     const formData = new FormData() as any;
-
     data.name && formData.append("name", data.name);
     data.product_category_id &&
       formData.append("product_category_id", data.product_category_id);
     data.description && formData.append("description", data.description);
     data.cost && formData.append("cost", data.cost);
     data.price && formData.append("price", data.price);
-    data.price_discount &&
-      formData.append("price_discount", data.price_discount);
-    data.current_count && formData.append("current_count", data.current_count);
+    data.quantity && formData.append("quantity", data.quantity);
     data.barcode && formData.append("barcode", data.barcode);
-    data.is_active && formData.append("is_active", data.is_active);
-    data.evaluation && formData.append("evaluation", data.evaluation);
+    formData.append("is_active", data.is_active);
     data.brand_id && formData.append("brand_id", data.brand_id);
-    console.log(selectedRows);
 
     if (selectedRows) {
       for (let i = 0; i < selectedRows?.length; i++) {
@@ -225,7 +252,7 @@ const AddProducts = () => {
         formData.append(`image${i + 1}`, gallery[i]);
       }
     }
-    console.log(formData);
+
     if (id) {
       Update(formData, {
         onSuccess() {
@@ -233,7 +260,6 @@ const AddProducts = () => {
           navigate("/product");
         },
         onError(error: any) {
-          console.log(error?.response?.data);
           toast(error?.response?.data.message);
         },
       });
@@ -244,7 +270,6 @@ const AddProducts = () => {
           navigate("/product");
         },
         onError(error: any) {
-          console.log(error?.response?.data);
           toast(error?.response?.data.message);
         },
       });
@@ -254,11 +279,11 @@ const AddProducts = () => {
   const form2 = useForm();
   const addCar = () => {
     const body: any = {
-      car_company_id: form.watch("car_company_id"),
-      car_model_id: form.watch("car_model_id"),
-      car_horsepower_id: form.watch("car_horsepower_id"),
-      car_year_id: form.watch("car_year_id"),
-      car_motor_id: form.watch("car_motor_id"),
+      company_id: form.watch("car_company_id"),
+      model_id: form.watch("car_model_id"),
+      horsepower_id: form.watch("car_horsepower_id"),
+      year_id: form.watch("car_year_id"),
+      motor_id: form.watch("car_motor_id"),
       color_id: form.watch("color_id"),
     };
     CreateCar(body, {
@@ -275,11 +300,8 @@ const AddProducts = () => {
         });
       },
     });
-    // console.log(form.watch("car_id"));
   };
-
-  // console.log(selectedRows)
-
+  //  console.log(car_model_name)
   return (
     <PageContainer
       breadcrumb={[{ title: id ? "تعديل المنتج" : "اضافة منتج" }]}
@@ -304,13 +326,6 @@ const AddProducts = () => {
               />
               <RHFTextField
                 control={form.control}
-                name="price_discount"
-                type="number"
-                placeholder="سعر الحسم"
-                label="سعر الحسم"
-              />
-              <RHFTextField
-                control={form.control}
                 name="cost"
                 type="number"
                 placeholder="تكلفة الشراء"
@@ -318,9 +333,9 @@ const AddProducts = () => {
               />
               <RHFTextField
                 control={form.control}
-                name="current_count"
-                placeholder=" العدد الحالي"
-                label="العدد الحالي "
+                name="quantity"
+                placeholder="الكمية"
+                label="الكمية"
               />
               <SelectFiled
                 label="الماركة"
@@ -344,15 +359,7 @@ const AddProducts = () => {
                 placeholder="الباركود"
                 label="الباركود"
               />
-              <RHFTextField
-                control={form.control}
-                name="evaluation"
-                min={1}
-                max={5}
-                type="number"
-                placeholder="تقييم المنتج"
-                label="تقييم المنتج"
-              />
+
               <div className="bg-white my-6 p-4 rounded-lg flex justify-between shadow items-center">
                 <p>Status</p>
                 <RHFSwitch name="is_active" control={form.control} checked />
@@ -374,6 +381,7 @@ const AddProducts = () => {
               <div className="grid grid-cols-3 gap-2">
                 {gallery?.map((g: any) => (
                   <img
+                    key={g}
                     width={40}
                     height={40}
                     className="w-full h-full  rounded-xl object-cover"
@@ -450,12 +458,88 @@ const AddProducts = () => {
               اضافة سيارة
             </Button>
           </div>
-          <DataTable
-            columns={cols}
-            data={cars}
-            selectableRows
-            onSelectedRowsChange={handleSelectedRowsChange}
-          />
+          <div className="bg-white p-2 shadow-lg">
+          <div className="flex w-full gap-2 mb-4">
+        <div className="flex flex-col w-full gap-2">
+          <Label>شركة السيارة</Label>
+          <select
+            onChange={(value) => setFilterValueCompany(value.target.value)}
+            className=" bg-white p-2 border border-gray-300 rounded-lg w-full"
+          >
+            <option>اختر شركة سيارة</option>
+            {car_company_name?.map((company : any) => (
+              <option key={company.id} value={company.name}>
+                {company.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex flex-col w-full gap-2">
+          <Label>لون السيارة</Label>
+          <select
+            onChange={(value) => setFilterValueColor(value.target.value)}
+            className="bg-white p-2 border border-gray-300 rounded-lg w-full"
+          >
+            <option>اختر لون سيارة</option>
+            {color?.map((company : any) => (
+              <option key={company.name} value={company.name}>
+                {company.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex flex-col w-full gap-2">
+          <Label>موديل السيارة</Label>
+          <select
+            onChange={(value) => setFilterValueModel(value.target.value)}
+            className="w-full bg-white p-2 border border-gray-300 rounded-lg"
+          >
+            <option>اختر لون السيارة</option>
+            {car_model_name?.map((company : any) => (
+              <option key={company.name} value={company.name}>
+                {company.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex flex-col w-full gap-2">
+          <Label>قوة المحرك</Label>
+          <select
+            onChange={(value) => setFilterValueMotor(value.target.value)}
+            className="w-full bg-white p-2 border border-gray-300 rounded-lg"
+          >
+            <option>اختر قوة محرك</option>
+            {car_motor_name?.map((company : any) => (
+              <option key={company.name} value={company.name}>
+                {company.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex flex-col w-full gap-2">
+          <Label>سنة الصنع</Label>
+          <select
+            onChange={(value) => setFilterValueYear(value.target.value)}
+            className="w-full bg-white p-2 border border-gray-300 rounded-lg"
+          >
+            <option>اختر سنة الصنع </option>
+            {carYearOptions?.map((company : any) => (
+              <option key={company.name} value={company.name}>
+                {company.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+            <DataTable
+              columns={cols}
+              data={cars}
+              selectableRows
+              onSelectedRowsChange={handleSelectedRowsChange}
+            />
+          </div>
+
           <div className="flex gap-2 my-6 justify-center w-full">
             <Button className="w-full">{id ? "تعديل" : "اضافة"}</Button>
             <Button className="w-full" variant={`cancel`}>

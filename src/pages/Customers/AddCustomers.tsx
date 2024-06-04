@@ -111,62 +111,62 @@ const AddCustomers: FC<{
         <Form {...form}>
           <form onSubmit={form.handleSubmit(submitHandler)}>
             <h1 className="text-center text-xl">اضافة زبون جديد</h1>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="flex flex-col">
-                <RHFTextField
-                  control={form.control}
-                  name="phone"
-                  label="رقم التليفون"
-                  placeholder="رقم التليفون"
-                />
-                <RHFTextField
-                  control={form.control}
-                  name="email"
-                  label="الايميل"
-                  placeholder="الايميل"
-                />
-                <RHFTextField
-                  control={form.control}
-                  name="address"
-                  label="العنوان"
-                  placeholder="العنوان"
-                />
+              <div className="grid grid-cols-3 gap-4">
+                <div className="flex flex-col">
+                  <RHFTextField
+                    control={form.control}
+                    name="phone"
+                    label="رقم التليفون"
+                    placeholder="رقم التليفون"
+                  />
+                  <RHFTextField
+                    control={form.control}
+                    name="email"
+                    label="الايميل"
+                    placeholder="الايميل"
+                  />
+                  <RHFTextField
+                    control={form.control}
+                    name="address"
+                    label="العنوان"
+                    placeholder="العنوان"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <RHFTextField
+                    control={form.control}
+                    name="name"
+                    label="الاسم"
+                    placeholder="الاسم"
+                  />
+                  <RHFTextField
+                    control={form.control}
+                    name="password"
+                    label="كلمة السر"
+                    placeholder="كلمة السر"
+                    type="password"
+                  />
+                </div>
+                {currentValue ? (
+                  <img
+                    src={
+                      typeof currentValue === "string"
+                        ? currentValue
+                        : URL.createObjectURL(currentValue)
+                    }
+                    alt={currentValue.name}
+                    className="w-40 h-28 mt-6 rounded-xl object-cover"
+                  />
+                ) : (
+                  <RHFInputFile
+                    setValue={form.setValue}
+                    control={form.control}
+                    name="image"
+                    label="اضافة صورة "
+                    watch={form.watch}
+                  />
+                )}
               </div>
-              <div className="flex flex-col">
-                <RHFTextField
-                  control={form.control}
-                  name="name"
-                  label="الاسم"
-                  placeholder="الاسم"
-                />
-                <RHFTextField
-                  control={form.control}
-                  name="password"
-                  label="كلمة السر"
-                  placeholder="كلمة السر"
-                  type="password"
-                />
-              </div>
-              {currentValue ? (
-                <img
-                  src={
-                    typeof currentValue === "string"
-                      ? currentValue
-                      : URL.createObjectURL(currentValue)
-                  }
-                  alt={currentValue.name}
-                  className="w-40 h-28 mt-6 rounded-xl object-cover"
-                />
-              ) : (
-                <RHFInputFile
-                  setValue={form.setValue}
-                  control={form.control}
-                  name="image"
-                  label="اضافة صورة "
-                  watch={form.watch}
-                />
-              )}
-            </div>
 
             <div className="flex gap-4 my-4 w-full">
               <Button className="w-full">حفظ</Button>

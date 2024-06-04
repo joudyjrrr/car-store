@@ -35,6 +35,9 @@ export default function Routes() {
   const Sells = lazy(() => import("../../pages/Sells/Sells"));
   const Drivers = lazy(() => import("../../pages/Drivers/Drivers"));
   const CarColor = lazy(() => import("../../pages/Cars/CarColor/CarColor"));
+  const ProductsCar = lazy(() => import("../../pages/Products/ProductsCar"));
+
+  
 
 
 
@@ -98,6 +101,10 @@ export default function Routes() {
         {
           path: "/editProduct/:id",
           element: <AddProducts />,
+        },
+        {
+          path: "/ProductsCar/:id",
+          element: <ProductsCar />,
         },
         {
           path: "/product/:id",
